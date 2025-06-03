@@ -1,0 +1,5 @@
+name: berry-economy-2
+version: '${project.version}'
+main: me.berrycraft.berryeconomy2.Berry_economy_2
+api-version: '1.21'
+depend: [NBTAPI]

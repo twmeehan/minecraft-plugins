@@ -1,0 +1,4 @@
+name: bug-fixes
+version: '1.0'
+main: me.berrycraft.bugfixes.Fixes
+api-version: '1.20'

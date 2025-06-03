@@ -5,7 +5,7 @@ import me.berrycraft.berryeconomy.auction.AuctionEventHandler;
 import me.berrycraft.berryeconomy.auction.windows.AuctionWindow;
 import me.berrycraft.berryeconomy.auction.windows.Window;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -83,7 +83,7 @@ public class Search extends Element implements Listener {
             new BukkitRunnable() {
                 public void run() {
 
-                    e.getPlayer().removePotionEffect(PotionEffectType.SLOW);
+                    e.getPlayer().removePotionEffect(PotionEffectType.SLOWNESS);
                     s.createBrush();
                     s.setIcon();
                     s.searchTimeout.cancel();
@@ -113,7 +113,7 @@ public class Search extends Element implements Listener {
             // make sure that the system knows that Player p is prompted to enter a keyword by THIS Search object
             openSearches.put(p,this);
 
-            p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW,200,2,false, false, true));
+            p.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS,200,2,false, false, true));
             p.closeInventory();
 
             // this will run in 10s when the search times out

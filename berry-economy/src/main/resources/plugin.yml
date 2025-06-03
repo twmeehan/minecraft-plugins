@@ -1,7 +1,8 @@
 name: berry-economy
 version: '${project.version}'
 main: me.berrycraft.berryeconomy.Berry
-api-version: '1.20'
+api-version: '1.21.5'
+depend: [NBTAPI]
 commands:
   exchange:
     usage: /exchange
@@ -9,3 +10,11 @@ commands:
   auction:
     usage: /auction
     description: open the auction house gui
+  gamble:
+    usage: /gamble
+    description: purchase lootboxes
+  customloot:
+    description: Manage custom loot tables
+    usage: /customloot <create|delete> <name>
+    permission: berry.customloot
+    aliases: [cl]

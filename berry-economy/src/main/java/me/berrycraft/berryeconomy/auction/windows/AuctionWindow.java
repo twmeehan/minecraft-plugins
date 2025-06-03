@@ -1,13 +1,12 @@
 package me.berrycraft.berryeconomy.auction.windows;
 
-import jdk.vm.ci.code.site.Mark;
 import me.berrycraft.berryeconomy.Berry;
 import me.berrycraft.berryeconomy.auction.AuctionEventHandler;
 import me.berrycraft.berryeconomy.auction.MarketEntry;
 import me.berrycraft.berryeconomy.auction.windows.elements.Filter;
 import me.berrycraft.berryeconomy.auction.windows.elements.Search;
 import me.berrycraft.berryeconomy.items.CustomItemEventHandler;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -49,7 +48,7 @@ public class AuctionWindow extends Window {
     private void setupEmtpyPage() {
 
         ItemStack border = new ItemStack(Material.ORANGE_STAINED_GLASS_PANE);
-        border.addUnsafeEnchantment(Enchantment.DAMAGE_ALL,1);
+        border.addUnsafeEnchantment(Enchantment.SHARPNESS,1);
         ItemMeta borderMeta = border.getItemMeta();
         borderMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         borderMeta.setDisplayName(" ");
@@ -103,7 +102,7 @@ public class AuctionWindow extends Window {
         currentPage = page;
 
         ItemStack border = new ItemStack(Material.ORANGE_STAINED_GLASS_PANE);
-        border.addUnsafeEnchantment(Enchantment.DAMAGE_ALL,1);
+        border.addUnsafeEnchantment(Enchantment.SHARPNESS,1);
         ItemMeta borderMeta = border.getItemMeta();
         borderMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         borderMeta.setDisplayName(" ");

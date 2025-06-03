@@ -6,8 +6,14 @@ import me.berrycraft.berryeconomy.auction.windows.AuctionWindow;
 import me.berrycraft.berryeconomy.auction.windows.elements.Price;
 import me.berrycraft.berryeconomy.auction.windows.elements.Search;
 import me.berrycraft.berryeconomy.commands.AuctionCommand;
+import me.berrycraft.berryeconomy.commands.CustomLootCommand;
 import me.berrycraft.berryeconomy.commands.ExchangeCommand;
+import me.berrycraft.berryeconomy.commands.GambleCommand;
 import me.berrycraft.berryeconomy.commands.GiveCommand;
+import me.berrycraft.berryeconomy.custom_loot.CustomLootEventHandler;
+import me.berrycraft.berryeconomy.custom_loot.CustomLootTable;
+import me.berrycraft.berryeconomy.custom_loot.WeightInputHandler;
+import me.berrycraft.berryeconomy.items.CommonCrate;
 import me.berrycraft.berryeconomy.items.CustomItemEventHandler;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.HumanEntity;
@@ -40,6 +46,11 @@ public final class Berry extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new Search(), this);
         getServer().getPluginManager().registerEvents(new Price(), this);
         getServer().getPluginManager().registerEvents(new BerryLoot(), this);
+        getServer().getPluginManager().registerEvents(new CommonCrate(), this);
+        getServer().getPluginManager().registerEvents(new CustomLootEventHandler(), this);
+        getServer().getPluginManager().registerEvents(new WeightInputHandler(), this);
+
+
         try {
             if (!getDataFolder().exists()) {
                 getDataFolder().mkdirs();
@@ -51,6 +62,7 @@ public final class Berry extends JavaPlugin {
             } else {
                 getLogger().info("Config.yml found, loading!");
             }
+            CustomLootTable.init();
         } catch (Exception e) {
             e.printStackTrace();
 
@@ -71,7 +83,15 @@ public final class Berry extends JavaPlugin {
         ExchangeCommand exchangeCommand = new ExchangeCommand();
         getServer().getPluginManager().registerEvents(exchangeCommand, this);
         this.getCommand("exchange").setExecutor(exchangeCommand);
+        
         this.getCommand("auction").setExecutor(new AuctionCommand());
+
+        this.getCommand("customloot").setExecutor(new CustomLootCommand());
+
+        GambleCommand gambleCommand = new GambleCommand();
+        getServer().getPluginManager().registerEvents(gambleCommand, this);
+        this.getCommand("gamble").setExecutor(gambleCommand);
+
     }
 
     @Override

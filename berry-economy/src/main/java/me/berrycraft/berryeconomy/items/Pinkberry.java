@@ -1,5 +1,6 @@
 package me.berrycraft.berryeconomy.items;
 
+import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.NBTItem;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -19,16 +20,17 @@ public class Pinkberry extends CustomItem{
     // use new Pinkberry() to get an item stack containing 1 pinkberry
     public Pinkberry() {
 
-        super(Material.IRON_INGOT);
+        super(Material.PLAYER_HEAD);
+        super.setSkull("http://textures.minecraft.net/texture/778308fe4dda1bb8a96f5b226b32542f49fd65bc55b44bbc31343eb400cf5e2");
 
         ItemMeta meta = this.getItemMeta();
         meta.setCustomModelData(1);
-        meta.setDisplayName(ChatColor.YELLOW + "Silver Coin");
+        meta.setDisplayName(ChatColor.AQUA + "Pinkberry");
 
         this.setItemMeta(meta);
-        NBTItem nbti = new NBTItem(this);
-        nbti.setString("CustomItem","Pinkberry");
-        nbti.applyNBT(this);
+        NBT.modify(this, nbt -> {
+            nbt.setString("CustomItem","Pinkberry");
+        });
         this.setAmount(1);
 
     }
@@ -36,28 +38,29 @@ public class Pinkberry extends CustomItem{
     // use new Pinkberry(amount) to get an item stack containing said amount of pinkberry
     public Pinkberry(int amount) {
 
-        super(Material.IRON_INGOT);
+        super(Material.PLAYER_HEAD);
+        super.setSkull("http://textures.minecraft.net/texture/778308fe4dda1bb8a96f5b226b32542f49fd65bc55b44bbc31343eb400cf5e2");
 
         ItemMeta meta = this.getItemMeta();
         meta.setCustomModelData(1);
-        meta.setDisplayName(ChatColor.YELLOW + "Silver Coin");
+        meta.setDisplayName(ChatColor.AQUA + "Pinkberry");
 
         this.setItemMeta(meta);
-        NBTItem nbti = new NBTItem(this);
-        nbti.setString("CustomItem","Pinkberry");
-        nbti.applyNBT(this);
+        NBT.modify(this, nbt -> {
+            nbt.setString("CustomItem","Pinkberry");
+        });
         this.setAmount(amount);
 
     }
     public static int getAmount(ItemStack stack) {
-        if (stack.getType()!=Material.IRON_INGOT) return 0;
+        if (stack.getType()!=Material.PLAYER_HEAD) return 0;
         NBTItem nbti = new NBTItem(stack);
         return nbti.getString("CustomItem").equals("Pinkberry") ? stack.getAmount() : 0;
     }
     public static int getAmount(Player p) {
         int total = 0;
         for (ItemStack stack : p.getInventory().getContents()) {
-            if (stack== null || stack.getType()!=Material.IRON_INGOT) continue;
+            if (stack== null || stack.getType()!=Material.PLAYER_HEAD) continue;
             else {
                 NBTItem nbti = new NBTItem(stack);
                 total += nbti.getString("CustomItem").equals("Pinkberry") ? stack.getAmount() : 0;

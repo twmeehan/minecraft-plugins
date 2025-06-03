@@ -8,7 +8,7 @@ import me.berrycraft.berryeconomy.auction.AuctionEventHandler;
 import me.berrycraft.berryeconomy.items.Pinkberry;
 import me.berrycraft.berryeconomy.items.Rainbowberry;
 import me.berrycraft.berryeconomy.items.Raspberry;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
@@ -35,7 +35,7 @@ public class MyListingsWindow extends Window {
         window = viewer.getServer().createInventory(viewer,size,name);
 
         ItemStack border = new ItemStack(Material.LIME_STAINED_GLASS_PANE);
-        border.addUnsafeEnchantment(Enchantment.DAMAGE_ALL,1);
+        border.addUnsafeEnchantment(Enchantment.SHARPNESS,1);
         ItemMeta borderMeta = border.getItemMeta();
         borderMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         borderMeta.setDisplayName(" ");

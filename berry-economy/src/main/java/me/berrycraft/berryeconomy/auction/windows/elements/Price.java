@@ -5,7 +5,7 @@ import me.berrycraft.berryeconomy.BerryUtility;
 import me.berrycraft.berryeconomy.auction.AuctionEventHandler;
 import me.berrycraft.berryeconomy.auction.windows.CreateListingWindow;
 import me.berrycraft.berryeconomy.auction.windows.Window;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -79,7 +79,7 @@ public class Price extends Element implements Listener {
             new BukkitRunnable() {
                 public void run() {
 
-                    e.getPlayer().removePotionEffect(PotionEffectType.SLOW);
+                    e.getPlayer().removePotionEffect(PotionEffectType.SLOWNESS);
                     s.searchTimeout.cancel();
                     ItemMeta meta = s.icon.getItemMeta();
                     meta.setLore(s.getLore());
@@ -122,7 +122,7 @@ public class Price extends Element implements Listener {
         // make sure that the system knows that Player p is prompted to enter a keyword by THIS Price object
         playersEnteringPrice.put(p,this);
 
-        p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW,200,2,false, false, true));
+        p.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS,200,2,false, false, true));
         p.closeInventory();
 
         // this will run in 10s when the price request times out

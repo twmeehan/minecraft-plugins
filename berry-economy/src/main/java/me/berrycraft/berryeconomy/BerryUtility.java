@@ -1,10 +1,12 @@
 package me.berrycraft.berryeconomy;
 
+import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.NBTItem;
 import me.berrycraft.berryeconomy.auction.MarketEntry;
 import me.berrycraft.berryeconomy.items.Pinkberry;
 import me.berrycraft.berryeconomy.items.Rainbowberry;
 import me.berrycraft.berryeconomy.items.Raspberry;
+import org.bukkit.inventory.ItemType;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -101,9 +103,9 @@ public class BerryUtility {
 
     public static ItemStack addRandUUID(ItemStack icon) {
         assert icon != null;
-        NBTItem nbti = new NBTItem(icon);
-        nbti.setString("Rand", UUID.randomUUID().toString());
-        nbti.applyNBT(icon);
+        NBT.modify(icon, nbt -> {
+            nbt.setString("rand",UUID.randomUUID().toString());
+        });
         return icon;
     }
 
@@ -146,4 +148,5 @@ public class BerryUtility {
 
 
     }
+
 }

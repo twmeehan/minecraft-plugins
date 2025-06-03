@@ -38,8 +38,7 @@ public abstract class CustomItem extends ItemStack {
         assert meta != null;
 
         // Always use the name Rainbowberry so that heads can stack
-        PlayerProfile profile = Bukkit.getServer().createPlayerProfile("Rainbowberry");
-
+        PlayerProfile profile = Bukkit.getServer().createPlayerProfile("CustomProfile");
         PlayerTextures texture = profile.getTextures();
         try {
             texture.setSkin(new URL(base64EncodedString), PlayerTextures.SkinModel.CLASSIC);

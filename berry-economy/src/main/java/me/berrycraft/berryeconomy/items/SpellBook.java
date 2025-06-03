@@ -12,6 +12,8 @@ public class SpellBook extends CustomItem {
     public SpellBook() {
         super(Material.ENCHANTED_BOOK);
         ItemMeta meta = this.getItemMeta();
+        if (meta == null) throw new IllegalStateException("ItemMeta was null for ENCHANTED_BOOK");
+
 
         meta.setDisplayName(ChatColor.GRAY+""+ChatColor.MAGIC + "S" +ChatColor.GRAY +  " Heal I "+ChatColor.GRAY+""+ChatColor.MAGIC  + "S");
         ArrayList<String> lore = new ArrayList<>();

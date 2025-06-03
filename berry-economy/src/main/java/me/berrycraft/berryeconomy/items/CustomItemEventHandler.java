@@ -22,6 +22,7 @@ public class CustomItemEventHandler implements Listener {
         if (e.getItemInHand().getType()== Material.PLAYER_HEAD) {
             
             NBTItem nbti = new NBTItem(e.getItemInHand());
+            //if (nbti.getString("CustomItem").equals("CommonCrate") || nbti.getString("CustomItem").equals("RareCrate")) return;
             e.setCancelled(nbti.hasTag("CustomItem"));
 
         }

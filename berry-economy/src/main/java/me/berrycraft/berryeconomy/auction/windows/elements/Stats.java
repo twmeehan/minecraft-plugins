@@ -1,7 +1,7 @@
 package me.berrycraft.berryeconomy.auction.windows.elements;
 
 import me.berrycraft.berryeconomy.auction.windows.Window;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;

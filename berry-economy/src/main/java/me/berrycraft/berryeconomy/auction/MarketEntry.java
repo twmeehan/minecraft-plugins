@@ -1,11 +1,11 @@
 package me.berrycraft.berryeconomy.auction;
 
-import de.tr7zw.nbtapi.NBTItem;
+import de.tr7zw.nbtapi.NBT;
 import me.berrycraft.berryeconomy.BerryUtility;
 import me.berrycraft.berryeconomy.items.Pinkberry;
 import me.berrycraft.berryeconomy.items.Rainbowberry;
 import me.berrycraft.berryeconomy.items.Raspberry;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -111,9 +111,9 @@ public class MarketEntry {
         ItemMeta meta = icon.getItemMeta();
         meta.setLore(iconLore);
         icon.setItemMeta(meta);
-        NBTItem nbti = new NBTItem(icon);
-        nbti.setString("ID",UUID.randomUUID().toString());
-        nbti.applyNBT(icon);
+        NBT.modify(icon, nbt -> {
+            nbt.setString("ID",UUID.randomUUID().toString());
+        });
         return icon;
     }
     private ItemStack setupExpiredItem() {
@@ -144,9 +144,9 @@ public class MarketEntry {
         meta.setDisplayName(ChatColor.RED + "[EXPIRED] " + item.getItemMeta().getLocalizedName());
         meta.setLore(iconLore);
         icon.setItemMeta(meta);
-        NBTItem nbti = new NBTItem(icon);
-        nbti.setString("ID",UUID.randomUUID().toString());
-        nbti.applyNBT(icon);
+        NBT.modify(icon, nbt -> {
+            nbt.setString("ID",UUID.randomUUID().toString());
+        });
         return icon;
     }
     private ItemStack setupSoldItem() {
@@ -173,7 +173,7 @@ public class MarketEntry {
 
         BerryUtility.addRandUUID(icon);
 
-        List<String> itemLore = icon.getItemMeta().getLore();
+        List<String> itemLore = item.getItemMeta().getLore();
         ArrayList<String> iconLore = new ArrayList<>();
         iconLore.add(ChatColor.GRAY + "");
         iconLore.add(ChatColor.GRAY + "Profits: " + ChatColor.GOLD + ((int)(price*100))/100.0 +"$");
@@ -192,9 +192,9 @@ public class MarketEntry {
         meta.setDisplayName(ChatColor.GREEN + "[SOLD] " +item.getItemMeta().getDisplayName());
         meta.setLore(iconLore);
         icon.setItemMeta(meta);
-        NBTItem nbti = new NBTItem(icon);
-        nbti.setString("ID",UUID.randomUUID().toString());
-        nbti.applyNBT(icon);
+        NBT.modify(icon, nbt -> {
+            nbt.setString("ID",UUID.randomUUID().toString());
+        });
 
         return icon;
     }

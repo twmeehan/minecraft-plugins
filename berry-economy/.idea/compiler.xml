@@ -9,5 +9,8 @@
         <module name="berry-economy" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="berry-economy-2" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>
