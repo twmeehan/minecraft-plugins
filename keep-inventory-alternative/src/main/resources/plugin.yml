@@ -1,0 +1,4 @@
+name: keep-inventory-alternative
+version: '${project.version}'
+main: me.berrycraft.keepinventoryalternative.KeepInventoryAlternative
+api-version: '1.21'

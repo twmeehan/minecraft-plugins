@@ -1,32 +1,29 @@
 package me.berrycraft.berryeconomy.custom_loot;
 
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-
 import me.berrycraft.berryeconomy.Berry;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CustomLootTable {
 
     private static final File lootFolder = new File(Berry.getInstance().getDataFolder(), "loot");
-    private static final LinkedList<CustomLootTable> tables = new LinkedList<>();
 
-    private String name;
-    private ArrayList<CustomLootTableEntry> entries;
+    private static final HashMap<String, CustomLootTable> tables = new HashMap<>();
+
+    private final String name;
+    private final ArrayList<CustomLootTableEntry> entries;
+    private final HashMap<Integer, Integer> weightLookupMap = new HashMap<>();
+    private int totalWeight = 0;
 
     public CustomLootTable(String name, ArrayList<CustomLootTableEntry> entries) {
         this.name = name;
         this.entries = entries;
+        populateWeightMap();
     }
 
     public String getName() {
@@ -37,31 +34,82 @@ public class CustomLootTable {
         return entries;
     }
 
+    public void populateWeightMap() {
+        weightLookupMap.clear();
+        int cursor = 0;
+        for (int i = 0; i < entries.size(); i++) {
+            int weight = entries.get(i).getWeight();
+            for (int j = 0; j < weight; j++) {
+                weightLookupMap.put(cursor++, i);
+            }
+        }
+        totalWeight = cursor;
+    }
+
+    public LinkedList<ItemStack> roll(Random rng) {
+        LinkedList<ItemStack> dropList = new LinkedList<>();
+        if (totalWeight == 0 || weightLookupMap.isEmpty()) return dropList;
+
+        int index = rng.nextInt(totalWeight);
+        int entryIndex = weightLookupMap.getOrDefault(index, -1);
+        CustomLootTableEntry entry = (entryIndex >= 0 && entryIndex < entries.size()) ? entries.get(entryIndex) : null;
+        if (entry == null) return dropList;
+
+        for (int i = 0; i < entry.getRolls(); i++) {
+            ItemStack item = entry.getItem().clone();
+            ItemMeta meta = item.getItemMeta();
+            if (meta != null && meta.hasDisplayName() && meta.getDisplayName().endsWith(".yml")) {
+                String linkedTable = meta.getDisplayName().replace(".yml", "");
+                CustomLootTable linked = CustomLootTable.getTable(linkedTable);
+                if (linked != null) {
+                    dropList.addAll(linked.roll(rng));
+                    continue;
+                }
+            }
+
+            double x = Math.random();
+            int amount;
+            if (entry.getRandomness() == 0) {
+                amount = item.getAmount();
+            } else {
+                amount = (int) Math.ceil((1 - Math.pow(x, 1.0 / entry.getRandomness())) * item.getAmount());
+            }
+            item.setAmount(Math.max(1, amount));
+            dropList.add(item);
+        }
+
+        return dropList;
+    }
+
     public static void init() {
         tables.clear();
         if (!lootFolder.exists()) lootFolder.mkdirs();
-    
+
         File[] files = lootFolder.listFiles((dir, name) -> name.endsWith(".yml"));
         if (files == null) return;
-    
+
         for (File file : files) {
             YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
             List<Map<?, ?>> rawList = config.getMapList("entries");
-    
+
             ArrayList<CustomLootTableEntry> entryList = new ArrayList<>();
             for (Map<?, ?> entryData : rawList) {
                 Object itemObj = entryData.get("item");
                 Object weightObj = entryData.get("weight");
-    
+                Object rollsObj = entryData.get("rolls");
+                Object randomnessObj = entryData.get("randomness");
+
                 if (itemObj instanceof ItemStack && weightObj instanceof Number) {
                     ItemStack item = (ItemStack) itemObj;
-                    double weight = ((Number) weightObj).doubleValue();
-                    entryList.add(new CustomLootTableEntry(item, weight));
+                    int weight = ((Number) weightObj).intValue();
+                    int rolls = (rollsObj instanceof Number) ? ((Number) rollsObj).intValue() : 1;
+                    double randomness = (randomnessObj instanceof Number) ? ((Number) randomnessObj).doubleValue() : 0.0;
+                    entryList.add(new CustomLootTableEntry(item, weight, rolls, randomness));
                 }
             }
-    
+
             String tableName = file.getName().replace(".yml", "");
-            tables.add(new CustomLootTable(tableName, entryList));
+            tables.put(tableName, new CustomLootTable(tableName, entryList));
         }
     }
 
@@ -79,6 +127,8 @@ public class CustomLootTable {
             Map<String, Object> data = new HashMap<>();
             data.put("item", entry.getItem());
             data.put("weight", entry.getWeight());
+            data.put("rolls", entry.getRolls());
+            data.put("randomness", entry.getRandomness());
             serializedList.add(data);
         }
 
@@ -87,7 +137,7 @@ public class CustomLootTable {
         try {
             config.save(file);
             ArrayList<CustomLootTableEntry> entryList = new ArrayList<>(Arrays.asList(entriesArray));
-            tables.add(new CustomLootTable(name, entryList));
+            tables.put(name, new CustomLootTable(name, entryList));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -97,19 +147,40 @@ public class CustomLootTable {
         File file = new File(lootFolder, tableName + ".yml");
         if (file.exists()) file.delete();
 
-        tables.removeIf(table -> table.getName().equalsIgnoreCase(tableName));
+        tables.remove(tableName);
     }
 
-    public static LinkedList<CustomLootTable> getTables() {
+    public static HashMap<String, CustomLootTable> getTables() {
         return tables;
     }
 
     public static CustomLootTable getTable(String name) {
-        for (CustomLootTable table : tables) {
-            if (table.getName().equalsIgnoreCase(name)) {
-                return table;
-            }
-        }
-        return null; // not found
+        return tables.get(name);
     }
-}
+
+    public static void saveOrReplaceTable(CustomLootTableEntry[] entriesArray, String name) {
+        File file = new File(lootFolder, name + ".yml");
+
+        YamlConfiguration config = new YamlConfiguration();
+        List<Map<String, Object>> serializedList = new ArrayList<>();
+
+        for (CustomLootTableEntry entry : entriesArray) {
+            Map<String, Object> data = new HashMap<>();
+            data.put("item", entry.getItem());
+            data.put("weight", entry.getWeight());
+            data.put("rolls", entry.getRolls());
+            data.put("randomness", entry.getRandomness());
+            serializedList.add(data);
+        }
+
+        config.set("entries", serializedList);
+
+        try {
+            config.save(file);
+            ArrayList<CustomLootTableEntry> entryList = new ArrayList<>(Arrays.asList(entriesArray));
+            tables.put(name.toLowerCase(), new CustomLootTable(name, entryList));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+} 

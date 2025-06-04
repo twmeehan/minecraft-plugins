@@ -1,5 +1,6 @@
 package me.berrycraft.berryeconomy.commands;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import org.bukkit.Bukkit;
@@ -40,14 +41,25 @@ public class GambleCommand implements CommandExecutor, Listener {
         playersGambling.add(p.getName());
         Inventory GUI = p.getServer().createInventory(p,27,ChatColor.DARK_PURPLE +"Purchase Lootboxes");
 
-        ItemStack commonCrate = new Raspberry();
+        ItemStack commonCrate = new CommonCrate();
         ItemMeta meta = commonCrate.getItemMeta();
-        meta.setDisplayName(ChatColor.GRAY + "Purchase 1 " + ChatColor.YELLOW + " Common Crate");
+        meta.setDisplayName(ChatColor.GRAY + "Purchase 1" + ChatColor.YELLOW + " Common Crate");
+
+        ArrayList<String> lore = new ArrayList<>();
+        lore.add(ChatColor.GRAY + "");
+        // get stats from scoreboard
+        lore.add(ChatColor.GRAY + "Price: " + ChatColor.GOLD +"2$");
+        meta.setLore(lore);
         commonCrate.setItemMeta(meta);
 
-        ItemStack rareCrate = new Rainbowberry();
+        ItemStack rareCrate = new RareCrate();
         meta = rareCrate.getItemMeta();
-        meta.setDisplayName(ChatColor.GRAY + "Purchase 1 " + ChatColor.LIGHT_PURPLE + " Rare Crate");
+        meta.setDisplayName(ChatColor.GRAY + "Purchase 1" + ChatColor.LIGHT_PURPLE + " Rare Crate");
+        lore = new ArrayList<>();
+        lore.add(ChatColor.GRAY + "");
+        // get stats from scoreboard
+        lore.add(ChatColor.GRAY + "Price: " + ChatColor.GOLD +"8$");
+        meta.setLore(lore);
         rareCrate.setItemMeta(meta);
 
         // place items in their correct slots

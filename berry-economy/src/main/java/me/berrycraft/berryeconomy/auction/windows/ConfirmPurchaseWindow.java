@@ -70,7 +70,7 @@ public class ConfirmPurchaseWindow extends Window {
 
                 BerryUtility.removeBerries(viewer,((int)(entry.getPrice()*100+0.5))/100.0);
                 BerryUtility.give(viewer, entry.getItem());
-                viewer.playSound(viewer, Sound.BLOCK_CHAIN_BREAK,2.0f,1.7f);
+                viewer.playSound(viewer, Sound.BLOCK_AMETHYST_CLUSTER_PLACE,2.0f,1.3f);
                 prevWindow.openPage(0);
                 AuctionEventHandler.openWindow(viewer,prevWindow);
 

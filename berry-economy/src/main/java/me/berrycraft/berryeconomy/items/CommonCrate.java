@@ -1,13 +1,19 @@
 package me.berrycraft.berryeconomy.items;
 
+import java.util.LinkedList;
+import java.util.Random;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
+import org.bukkit.Particle.DustOptions;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -22,6 +28,7 @@ import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.NBTItem;
 import me.berrycraft.berryeconomy.Berry;
 import me.berrycraft.berryeconomy.BerryUtility;
+import me.berrycraft.berryeconomy.custom_loot.CustomLootTable;
 
 public class CommonCrate extends CustomItem implements Listener{
 
@@ -47,21 +54,25 @@ public class CommonCrate extends CustomItem implements Listener{
         NBTItem nbti = new NBTItem(p.getItemInHand());
 
         if (!nbti.getString("CustomItem").equals("CommonCrate")) return;
-
+        if (e.getClickedBlock()==null) return;
         Location loc = e.getClickedBlock().getLocation().add(0.5,0.5,0.5); // in front of player
-        ArmorStand stand = p.getWorld().spawn(loc, ArmorStand.class);
-        
-        Vector direction = p.getLocation().toVector().subtract(loc.toVector());
-        float yaw = (float) Math.toDegrees(Math.atan2(-direction.getX(), direction.getZ())); // Minecraft yaw is Z-forward
+        ArmorStand stand = p.getWorld().spawn(loc, ArmorStand.class, as -> {
+            as.setVisible(false);
+            as.setMarker(true);
+            as.setGravity(false);
+            as.setInvulnerable(true);
+            as.setCustomNameVisible(false);
+            as.setSmall(true);
+        });
+        Vector toPlayer = p.getLocation().toVector().subtract(loc.toVector());
+        float angle = (float) Math.atan2(-toPlayer.getX(), toPlayer.getZ());
 
-        loc.setYaw(yaw);
-        stand.setVisible(false);
-        stand.setGravity(false);
+        stand.getLocation().setYaw(angle);
+        //stand.teleport(standLoc);
+
+
         stand.getAttribute(Attribute.SCALE).setBaseValue(1.5);
-        stand.setSmall(true);
-        stand.setMarker(true); // no hitbox
         stand.setHelmet(new CommonCrate()); // just for visual effect, optional
-        float angle = yaw;
         stand.getWorld().playSound(loc, Sound.BLOCK_AMETHYST_CLUSTER_BREAK, 1f, 1);
 
 
@@ -88,25 +99,63 @@ public class CommonCrate extends CustomItem implements Listener{
                     base_z + shake_z
                 ));
                 stand.getAttribute(Attribute.SCALE).setBaseValue((time/8)*(time/8)+1+Math.sin(time)*0.1);
+                stand.getWorld().spawnParticle(
+                        Particle.DUST,
+                        loc.clone().add(0,1,0),
+                        1, // count
+                        0.2, 0.2, 0.2, // offsetX/Y/Z
+                        1.0, // extra (ignored for DUST)
+                        new DustOptions(Color.WHITE, 0.5f) // color and size
+                    );
                 if (shake > 0.2) {
                     //stand.getWorld().playSound(loc, Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR, 0.1f, 1);
                     stand.getWorld().playSound(loc, Sound.BLOCK_CAVE_VINES_BREAK, 1f, 1);
+                    stand.getWorld().spawnParticle(
+                        Particle.DUST,
+                        loc.clone().add(0,1,0),
+                        10, // count
+                        0.2, 0.2, 0.2, // offsetX/Y/Z
+                        1.0, // extra (ignored for DUST)
+                        new DustOptions(Color.WHITE, 1.5f) // color and size
+                    );
 
                 }
                 if (time > 4) {
                     stand.getAttribute(Attribute.SCALE).setBaseValue((time/8)*(time/8)+1+Math.pow((time-4)*2,2)+Math.sin(time)*0.1);
                     stand.teleport(stand.getLocation().subtract(0,0.6*(time-4),0));
                 }
-                if (time > 4.5) {
+                if (time > 4.3) {
                     stand.getWorld().playSound(loc, Sound.ENTITY_LLAMA_SPIT, 1, 1);
                     stand.getWorld().playSound(loc, Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR, 0.5f, 1);
 
-                    stand.getWorld().spawnParticle(Particle.EXPLOSION, loc, 1);
+                    stand.getWorld().spawnParticle(Particle.EXPLOSION, loc, 2);
+                    stand.getWorld().spawnParticle(
+                        Particle.DUST,
+                        loc.clone().add(0,1,0),
+                        60, // count
+                        0.4, 0.4, 0.4, // offsetX/Y/Z
+                        1.0, // extra (ignored for DUST)
+                        new DustOptions(Color.WHITE, 2f) // color and size
+                    );
                     stand.remove(); // clean up
                     this.cancel();
+                    dropLoot(loc, "crate_rare");
                 }
             }
         }.runTaskTimer(Berry.getInstance(), 0, 1);
+    }
+
+    private void dropLoot(Location loc, String lootTable) {
+        LinkedList<ItemStack> loot = CustomLootTable.getTable(lootTable).roll(new Random());
+        for (ItemStack item : loot) {
+            Item dropped = loc.getWorld().dropItemNaturally(loc.clone().add(0,0.6,0), item);
+
+            // Apply random velocity
+            double dx = (Math.random() - 0.5) * 0.4;
+            double dy = Math.random() * 0.5 + 0.2;
+            double dz = (Math.random() - 0.5) * 0.4;
+            dropped.setVelocity(new Vector(dx, dy, dz));
+        }
     }
     
     

@@ -1,10 +1,6 @@
 package me.berrycraft.berryeconomy.custom_loot;
 
-import me.berrycraft.berryeconomy.BerryUtility;
-import me.berrycraft.berryeconomy.auction.windows.CreateListingWindow;
 import me.berrycraft.berryeconomy.auction.windows.Window;
-
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -20,7 +16,6 @@ import java.util.HashMap;
 
 public class CustomLootEventHandler implements Listener {
 
-    // maps each player to the custom loot window they have open
     private static final HashMap<Player, Window> openedLootWindows = new HashMap<>();
 
     public static void openWindow(Player p, Window window) {
@@ -42,28 +37,25 @@ public class CustomLootEventHandler implements Listener {
     public void onClick(InventoryClickEvent e) {
         if (!(e.getWhoClicked() instanceof Player)) return;
         Player player = (Player) e.getWhoClicked();
-
         if (!openedLootWindows.containsKey(player)) return;
 
-        // Let chat-based input work normally
         if (player.getScoreboardTags().contains("settingWeight")) return;
 
         Window window = openedLootWindows.get(player);
         e.setCancelled(true);
 
-        // If clicking in player inventory to add items to CustomLootTableWindow
+        // Add from player inventory
         if (window instanceof CustomLootTableWindow &&
-                e.getClickedInventory() != null &&
-                e.getClickedInventory().getType() == InventoryType.PLAYER &&
-                e.getCurrentItem() != null &&
-                e.getCurrentItem().getType() != Material.AIR) {
+            e.getClickedInventory() != null &&
+            e.getClickedInventory().getType() == InventoryType.PLAYER &&
+            e.getCurrentItem() != null &&
+            e.getCurrentItem().getType() != Material.AIR) {
 
-            
-            ((CustomLootTableWindow)window).addEntry(e.getCurrentItem().clone());
+            ((CustomLootTableWindow) window).addEntry(e.getCurrentItem().clone());
             return;
         }
 
-        // Clicked inside the GUI — route to the window's click method
+        // GUI slot interaction
         if (e.getClickedInventory() != null &&
             e.getClickedInventory().equals(window.getInventory())) {
             window.click(e.getSlot());
@@ -73,23 +65,21 @@ public class CustomLootEventHandler implements Listener {
     @EventHandler
     public void onClose(InventoryCloseEvent e) {
         if (!(e.getPlayer() instanceof Player)) return;
-        Player player = (Player)e.getPlayer();
+        Player player = (Player) e.getPlayer();
 
-        if (player.getScoreboardTags().contains("updatingWindow")) return;
-        if (player.getScoreboardTags().contains("settingWeight")) return;
+        if (player.getScoreboardTags().contains("updatingWindow") ||
+            player.getScoreboardTags().contains("settingWeight")) return;
 
-        if (openedLootWindows.get(player) instanceof CustomLootTableWindow) {
-            CustomLootTableWindow window = (CustomLootTableWindow) openedLootWindows.get(player);
-            CustomLootTable.createNewTable(window.getEntries(), window.getName());
-
-        } else if (openedLootWindows.get(player) instanceof CustomLootTableInspectionWindow) {
-            CustomLootTableInspectionWindow window = (CustomLootTableInspectionWindow) openedLootWindows.get(player);
-            CustomLootTable.createNewTable(window.parent.getEntries(), window.getName());
-
+        Window window = openedLootWindows.get(player);
+        if (window instanceof CustomLootTableWindow) {
+            CustomLootTableWindow lootWindow = (CustomLootTableWindow) window;
+            CustomLootTable.saveOrReplaceTable(lootWindow.getEntries(), lootWindow.getName());
+        } else if (window instanceof CustomLootTableInspectionWindow) {
+            CustomLootTableInspectionWindow inspectWindow = (CustomLootTableInspectionWindow) window;
+            CustomLootTable.saveOrReplaceTable(inspectWindow.parent.getEntries(), inspectWindow.parent.getName());
         }
+
         closeWindow(player);
-
-
     }
 
     @EventHandler
@@ -97,14 +87,11 @@ public class CustomLootEventHandler implements Listener {
         closeWindow(e.getPlayer());
         e.getPlayer().removeScoreboardTag("updatingWindow");
         e.getPlayer().removeScoreboardTag("settingWeight");
-
-
     }
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
         e.getPlayer().removeScoreboardTag("updatingWindow");
         e.getPlayer().removeScoreboardTag("settingWeight");
-
     }
 }

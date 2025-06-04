@@ -13,11 +13,26 @@ public class CustomLootTableWindow extends Window {
 
     private final Map<Integer, CustomLootTableEntry> entries = new HashMap<>();
 
-    public CustomLootTableWindow(Player viewer,String name) {
+    public CustomLootTableWindow(Player viewer, String name) {
         this.viewer = viewer;
         this.size = 54;
         this.name = name;
         this.window = viewer.getServer().createInventory(viewer, size, name);
+    }
+
+    public CustomLootTableWindow(Player viewer, String name, ArrayList<CustomLootTableEntry> preloadedEntries) {
+        this.viewer = viewer;
+        this.size = 54;
+        this.name = name;
+        this.window = viewer.getServer().createInventory(viewer, size, name);
+
+        int slot = 0;
+        for (CustomLootTableEntry entry : preloadedEntries) {
+            if (slot >= size) break;
+            entries.put(slot, entry);
+            window.setItem(slot, formatEntryItem(entry));
+            slot++;
+        }
     }
 
     @Override
@@ -32,7 +47,7 @@ public class CustomLootTableWindow extends Window {
     public void addEntry(ItemStack item) {
         for (int i = 0; i < size; i++) {
             if (!entries.containsKey(i)) {
-                CustomLootTableEntry entry = new CustomLootTableEntry(item.clone(), 1.0);
+                CustomLootTableEntry entry = new CustomLootTableEntry(item.clone(), 1, 1, 0.0);
                 entries.put(i, entry);
                 window.setItem(i, formatEntryItem(entry));
                 break;
@@ -57,8 +72,12 @@ public class CustomLootTableWindow extends Window {
     private ItemStack formatEntryItem(CustomLootTableEntry entry) {
         ItemStack item = entry.getItem().clone();
         ItemMeta meta = item.getItemMeta();
-        List<String> lore = meta.hasLore() ? meta.getLore() : new ArrayList<>();
+        List<String> lore = new ArrayList<>();
+
         lore.add(ChatColor.GRAY + "Weight: " + entry.getWeight());
+        lore.add(ChatColor.GRAY + "Rolls: " + entry.getRolls());
+        lore.add(ChatColor.GRAY + "Randomness: " + entry.getRandomness());
+
         meta.setLore(lore);
         item.setItemMeta(meta);
         return item;

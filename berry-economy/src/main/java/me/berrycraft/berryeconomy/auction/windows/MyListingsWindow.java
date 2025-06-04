@@ -95,7 +95,10 @@ public class MyListingsWindow extends Window {
             if (entry!= null) {
                 if (entry.getBuyer()!=null) {
                     BerryUtility.giveBerries(viewer,entry.getPrice());
-                    viewer.playSound(viewer, Sound.BLOCK_CHAIN_BREAK,2.0f,1.5f);
+                    float pitch1 = 1.5f;   // Root
+                    float pitch2 = 1.6818f; // Major third (1.5 * 2^(4/12))
+                    float pitch3 = 2.0f;
+                    viewer.playSound(viewer, Sound.BLOCK_NOTE_BLOCK_CHIME,2.0f,Math.random() < 0.33 ? pitch1 : Math.random() > 0.5 ? pitch2 : pitch3);
                     AuctionWindow.marketEntries.remove(entry);
                     Berry.getInstance().getConfig().set(entry.getID().toString(), null);
                     Berry.getInstance().saveConfig();

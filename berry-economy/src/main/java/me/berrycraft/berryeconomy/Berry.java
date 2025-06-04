@@ -15,10 +15,15 @@ import me.berrycraft.berryeconomy.custom_loot.CustomLootTable;
 import me.berrycraft.berryeconomy.custom_loot.WeightInputHandler;
 import me.berrycraft.berryeconomy.items.CommonCrate;
 import me.berrycraft.berryeconomy.items.CustomItemEventHandler;
+import me.berrycraft.berryeconomy.items.RareCrate;
+
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scoreboard.Criteria;
+import org.bukkit.scoreboard.Scoreboard;
 import org.checkerframework.checker.units.qual.A;
 
 import java.io.File;
@@ -47,6 +52,7 @@ public final class Berry extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new Price(), this);
         getServer().getPluginManager().registerEvents(new BerryLoot(), this);
         getServer().getPluginManager().registerEvents(new CommonCrate(), this);
+        getServer().getPluginManager().registerEvents(new RareCrate(), this);
         getServer().getPluginManager().registerEvents(new CustomLootEventHandler(), this);
         getServer().getPluginManager().registerEvents(new WeightInputHandler(), this);
 
@@ -86,11 +92,15 @@ public final class Berry extends JavaPlugin {
         
         this.getCommand("auction").setExecutor(new AuctionCommand());
 
-        this.getCommand("customloot").setExecutor(new CustomLootCommand());
+        CustomLootCommand customLootCommand = new CustomLootCommand();
+        this.getCommand("customloot").setExecutor(customLootCommand);
+        this.getCommand("customloot").setTabCompleter(customLootCommand);
 
         GambleCommand gambleCommand = new GambleCommand();
         getServer().getPluginManager().registerEvents(gambleCommand, this);
         this.getCommand("gamble").setExecutor(gambleCommand);
+
+        ensureScoreboardsExist();
 
     }
 
@@ -102,6 +112,23 @@ public final class Berry extends JavaPlugin {
 
     public static Berry getInstance() {
         return instance;
+    }
+
+    public static void ensureScoreboardsExist() {
+        Scoreboard board = Bukkit.getScoreboardManager().getMainScoreboard();
+        String[] objectives = {
+            "lifetimeListings",
+            "itemsSold",
+            "lifetimeProfits",
+            "itemsPurchased",
+            "lifetimeSpending"
+        };
+
+        for (String name : objectives) {
+            if (board.getObjective(name) == null) {
+                board.registerNewObjective(name, Criteria.DUMMY, name);
+            }
+        }
     }
 
 }

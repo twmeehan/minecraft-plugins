@@ -1,5 +1,6 @@
 package me.berrycraft.berryeconomy.items;
 
+import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.NBTItem;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -39,9 +40,9 @@ public class SpellBook extends CustomItem {
         lore.add(ChatColor.DARK_GRAY + ""+ChatColor.BOLD+"Common");
         meta.setLore(lore);
         this.setItemMeta(meta);
-        NBTItem nbti = new NBTItem(this);
-        nbti.setString("CustomItem","SpellBook");
-        nbti.applyNBT(this);
+        NBT.modify(this, nbt -> {
+            nbt.setString("CustomItem","SpellBook");
+        });
         this.setAmount(1);
     }
 }
