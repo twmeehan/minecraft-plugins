@@ -45,6 +45,48 @@ public class CustomLootTable {
         }
         totalWeight = cursor;
     }
+    // gives all the items in the table
+    public LinkedList<ItemStack> give() {
+        LinkedList<ItemStack> dropList = new LinkedList<>();
+        for (int i = 0; i < entries.size(); i++) {
+            CustomLootTableEntry entry = entries.get(i);
+            ItemStack item = entry.getItem();
+            ItemMeta meta = item.getItemMeta();
+            if (meta != null && meta.hasDisplayName() && meta.getDisplayName().endsWith(".yml")) {
+                String linkedTable = meta.getDisplayName().replace(".yml", "");
+                if (linkedTable.charAt(0)=='*') {
+                    linkedTable = linkedTable.replace("*", "");
+
+                    CustomLootTable linked = CustomLootTable.getTable(linkedTable);
+                    if (linked != null) {
+                        for (int j = 0; j < entry.getRolls(); j++) {
+                            dropList.addAll(linked.give());
+                        }
+                        continue;
+                    }
+                }
+                CustomLootTable linked = CustomLootTable.getTable(linkedTable);
+                if (linked != null) {
+                    for (int j = 0; j < entry.getRolls(); j++) {
+                        dropList.addAll(linked.roll(new Random()));
+                    }                    
+                    continue;
+                }
+            }
+
+            double x = Math.random();
+            int amount;
+            if (entry.getRandomness() == 0) {
+                amount = item.getAmount();
+            } else {
+                amount = (int) Math.ceil((1 - Math.pow(x, 1.0 / entry.getRandomness())) * item.getAmount());
+            }
+            item.setAmount(Math.max(1, amount));
+            dropList.add(item);
+        }
+        return dropList;
+
+    }
 
     public LinkedList<ItemStack> roll(Random rng) {
         LinkedList<ItemStack> dropList = new LinkedList<>();
@@ -60,9 +102,21 @@ public class CustomLootTable {
             ItemMeta meta = item.getItemMeta();
             if (meta != null && meta.hasDisplayName() && meta.getDisplayName().endsWith(".yml")) {
                 String linkedTable = meta.getDisplayName().replace(".yml", "");
+                if (linkedTable.charAt(0)=='*') {
+                    linkedTable = linkedTable.replace("*", "");
+                    CustomLootTable linked = CustomLootTable.getTable(linkedTable);
+                    if (linked != null) {
+                        for (int j = 0; j < entry.getRolls(); j++) {
+                            dropList.addAll(linked.give());
+                        }
+                        continue;
+                    }
+                }
                 CustomLootTable linked = CustomLootTable.getTable(linkedTable);
                 if (linked != null) {
-                    dropList.addAll(linked.roll(rng));
+                    for (int j = 0; j < entry.getRolls(); j++) {
+                        dropList.addAll(linked.roll(rng));
+                    }
                     continue;
                 }
             }

@@ -48,7 +48,11 @@ public class GambleCommand implements CommandExecutor, Listener {
         ArrayList<String> lore = new ArrayList<>();
         lore.add(ChatColor.GRAY + "");
         // get stats from scoreboard
-        lore.add(ChatColor.GRAY + "Price: " + ChatColor.GOLD +"2$");
+        lore.add(ChatColor.GRAY + "Price: " + ChatColor.GOLD +"2.0$");
+        lore.add(ChatColor.GRAY + "");
+        lore.add(ChatColor.YELLOW + "50%" + ChatColor.GRAY + " chance for" + ChatColor.WHITE + " Common");
+        lore.add(ChatColor.YELLOW + "35%" + ChatColor.GRAY + " chance for" + ChatColor.DARK_AQUA +  " Uncommon");
+        lore.add(ChatColor.YELLOW + "15%" + ChatColor.GRAY + " chance for" + ChatColor.DARK_PURPLE +  " Rare");
         meta.setLore(lore);
         commonCrate.setItemMeta(meta);
 
@@ -58,7 +62,13 @@ public class GambleCommand implements CommandExecutor, Listener {
         lore = new ArrayList<>();
         lore.add(ChatColor.GRAY + "");
         // get stats from scoreboard
-        lore.add(ChatColor.GRAY + "Price: " + ChatColor.GOLD +"8$");
+        lore.add(ChatColor.GRAY + "Price: " + ChatColor.GOLD +"8.0$");
+        lore.add(ChatColor.GRAY + "");
+
+        lore.add(ChatColor.YELLOW + "30%" + ChatColor.GRAY + " chance for" + ChatColor.DARK_AQUA + " Uncommon");
+        lore.add(ChatColor.YELLOW + "45%" + ChatColor.GRAY + " chance for" + ChatColor.DARK_PURPLE +  " Rare");
+        lore.add(ChatColor.YELLOW + "20%" + ChatColor.GRAY + " chance for" + ChatColor.GOLD +  " Legendary");
+        lore.add(ChatColor.YELLOW + "5%" + ChatColor.GRAY + " chance for" + ChatColor.DARK_RED +  " Mythic");
         meta.setLore(lore);
         rareCrate.setItemMeta(meta);
 

@@ -1,10 +1,12 @@
 package me.berrycraft.berryeconomy.items;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Random;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -16,6 +18,7 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -36,7 +39,18 @@ public class RareCrate extends CustomItem  implements Listener{
 
         ItemMeta meta = this.getItemMeta();
         meta.setDisplayName(ChatColor.LIGHT_PURPLE + "Rare Crate");
+        ArrayList<String> lore = new ArrayList<>();
+        lore.add(ChatColor.GRAY + "");
 
+        lore.add( ChatColor.GOLD + "Open " + ChatColor.YELLOW + "" + ChatColor.BOLD + "RIGHT-CLICK");
+        lore.add(ChatColor.GRAY + "");
+        lore.add(ChatColor.YELLOW + "30%" + ChatColor.GRAY + " chance for" + ChatColor.DARK_AQUA + " Uncommon");
+        lore.add(ChatColor.YELLOW + "45%" + ChatColor.GRAY + " chance for" + ChatColor.DARK_PURPLE +  " Rare");
+        lore.add(ChatColor.YELLOW + "20%" + ChatColor.GRAY + " chance for" + ChatColor.GOLD +  " Legendary");
+        lore.add(ChatColor.YELLOW + "5%" + ChatColor.GRAY + " chance for" + ChatColor.DARK_RED +  " Mythic");
+
+        meta.setLore(lore);
+        this.setItemMeta(meta);
         this.setItemMeta(meta);
         NBT.modify(this, nbt -> {
             nbt.setString("CustomItem","RareCrate");
@@ -47,6 +61,7 @@ public class RareCrate extends CustomItem  implements Listener{
     @EventHandler
     public void onClick(PlayerInteractEvent e) {
         if (e.getPlayer().getItemInHand().getType() != Material.PLAYER_HEAD) return;
+        if (e.getAction() == Action.LEFT_CLICK_BLOCK) return;
 
         Player p = e.getPlayer();
         NBTItem nbti = new NBTItem(p.getItemInHand());
@@ -54,6 +69,12 @@ public class RareCrate extends CustomItem  implements Listener{
         if (!nbti.getString("CustomItem").equals("RareCrate")) return;
         if (e.getClickedBlock()==null) return;
 
+
+        if (p.getGameMode()!=GameMode.CREATIVE) {
+            ItemStack stack = p.getItemInHand();
+            stack.setAmount(stack.getAmount()-1);
+
+        }
         Location loc = e.getClickedBlock().getLocation().add(0.5,0.5,0.5); // in front of player
         ArmorStand stand = p.getWorld().spawn(loc, ArmorStand.class, as -> {
             as.setVisible(false);
@@ -138,7 +159,56 @@ public class RareCrate extends CustomItem  implements Listener{
                     );
                     stand.remove(); // clean up
                     this.cancel();
-                    dropLoot(loc, "crate_rare");
+                    double rand_num = Math.random();
+                    if (rand_num < 0.3) {
+                        dropLoot(loc, "loot_uncommon");
+                        stand.getWorld().spawnParticle(
+                        Particle.DUST,
+                        loc.clone().add(0,1,0),
+                        30, // count
+                        0.4, 0.4, 0.4, // offsetX/Y/Z
+                        1.0, // extra (ignored for DUST)
+                        new DustOptions(Color.fromRGB(51,153,255), 3.5f)// color and size
+                        );
+
+                    } else if (rand_num < 0.75){
+                        dropLoot(loc, "loot_rare");
+                        stand.getWorld().spawnParticle(
+                        Particle.DUST,
+                        loc.clone().add(0,1,0),
+                        30, // count
+                        0.4, 0.4, 0.4, // offsetX/Y/Z
+                        1.0, // extra (ignored for DUST)
+                        new DustOptions(Color.fromRGB(153,51,255), 3.5f)// color and size
+                        );
+                    
+
+                    } else if (rand_num < 0.95){
+                        dropLoot(loc, "loot_legendary");
+                        stand.getWorld().playSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 1.0f, 1);
+
+                        stand.getWorld().spawnParticle(
+                        Particle.DUST,
+                        loc.clone().add(0,1,0),
+                        30, // count
+                        0.4, 0.4, 0.4, // offsetX/Y/Z
+                        1.0, // extra (ignored for DUST)
+                        new DustOptions(Color.fromRGB(255,204,0), 3.5f)// color and size
+                        );
+                        
+                    } else {
+                        dropLoot(loc, "loot_mythic");
+                        stand.getWorld().playSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 1.0f, 1);
+
+                        stand.getWorld().spawnParticle(
+                        Particle.DUST,
+                        loc.clone().add(0,1,0),
+                        30, // count
+                        0.4, 0.4, 0.4, // offsetX/Y/Z
+                        1.0, // extra (ignored for DUST)
+                        new DustOptions(Color.fromRGB(204,0,0), 3.5f)// color and size
+                        );
+                    }
                 }
             }
         }.runTaskTimer(Berry.getInstance(), 0, 1);

@@ -62,7 +62,7 @@ public class CustomLootCommand implements CommandExecutor, TabCompleter {
                 sender.sendMessage(ChatColor.GREEN + "Deleted loot table: " + tableName);
                 break;
 
-            case "roll":
+            case "roll": {
                 CustomLootTable table = CustomLootTable.getTable(tableName);
                 if (table == null) {
                     player.sendMessage(ChatColor.RED + "Loot table not found: " + tableName);
@@ -81,7 +81,28 @@ public class CustomLootCommand implements CommandExecutor, TabCompleter {
 
                 player.openInventory(inv);
                 break;
+            }
+            case "give": {
+                CustomLootTable table = CustomLootTable.getTable(tableName);
+                if (table == null) {
+                    player.sendMessage(ChatColor.RED + "Loot table not found: " + tableName);
+                    return true;
+                }
 
+                LinkedList<ItemStack> drops = table.give();
+                Inventory inv = Bukkit.createInventory(null, 27, "Rolled Loot: " + tableName); // Adjust size if needed
+
+                int i = 0;
+                for (ItemStack item : drops) {
+                    inv.setItem(i, item);
+                    i++;
+                    if (i >= inv.getSize()) break;
+                }
+
+                player.openInventory(inv);
+                break;
+
+            }
             default:
                 sender.sendMessage(ChatColor.RED + "Invalid action. Use 'create', 'edit', or 'delete'.");
         }
