@@ -130,13 +130,11 @@ public class BerryLoot implements Listener {
             }
         }
         
-        config = YamlConfiguration.loadConfiguration(file);
-
     }
 
     public static LinkedList<ItemStack> generateLoot(String lootTableName) {
         
-        Bukkit.broadcastMessage(lootTableName);
+        config = YamlConfiguration.loadConfiguration(file);
 
         if (!config.contains(lootTableName)) {
             Bukkit.getLogger().warning("Loot table '" + lootTableName + "' not found in loot_generation.yml");

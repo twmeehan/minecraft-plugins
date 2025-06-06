@@ -18,6 +18,7 @@ import me.berrycraft.berryeconomy.custom_loot.WeightInputHandler;
 import me.berrycraft.berryeconomy.items.CommonCrate;
 import me.berrycraft.berryeconomy.items.CustomItemEventHandler;
 import me.berrycraft.berryeconomy.items.RareCrate;
+import me.berrycraft.berryeconomy.logs.PlayerActivityLogs;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -31,6 +32,7 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.checkerframework.checker.units.qual.A;
 
 import java.io.File;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -47,6 +49,7 @@ public final class Berry extends JavaPlugin {
     private static Berry instance;
     File auctionFile;
     FileConfiguration auctionConfig;
+    private PlayerActivityLogs playerActivityLogs ;
     @Override
     public void onEnable() {
 
@@ -80,12 +83,24 @@ public final class Berry extends JavaPlugin {
 
         BerryLoot.init();
 
+        // Player join and leave logs
+        try {
+            playerActivityLogs = new PlayerActivityLogs("db-buf-04.sparkedhost.us:3306", "u176279_AzqIUqrWkU", "aIJ9YG9eY!nrLpu6GL+CnaMZ");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        if (playerActivityLogs != null) {
+            getServer().getPluginManager().registerEvents(playerActivityLogs, this);
+        }
+
 
     }
 
     @Override
     public void onDisable() {
 
+        if (playerActivityLogs != null) playerActivityLogs.close();
 
     }
 
