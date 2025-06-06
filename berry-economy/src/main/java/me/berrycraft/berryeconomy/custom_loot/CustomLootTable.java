@@ -59,17 +59,15 @@ public class CustomLootTable {
 
                     CustomLootTable linked = CustomLootTable.getTable(linkedTable);
                     if (linked != null) {
-                        for (int j = 0; j < entry.getRolls(); j++) {
-                            dropList.addAll(linked.give());
-                        }
+                        dropList.addAll(linked.give());
+
                         continue;
                     }
                 }
                 CustomLootTable linked = CustomLootTable.getTable(linkedTable);
                 if (linked != null) {
-                    for (int j = 0; j < entry.getRolls(); j++) {
-                        dropList.addAll(linked.roll(new Random()));
-                    }                    
+                    dropList.addAll(linked.roll(new Random()));
+                
                     continue;
                 }
             }
@@ -106,17 +104,15 @@ public class CustomLootTable {
                     linkedTable = linkedTable.replace("*", "");
                     CustomLootTable linked = CustomLootTable.getTable(linkedTable);
                     if (linked != null) {
-                        for (int j = 0; j < entry.getRolls(); j++) {
-                            dropList.addAll(linked.give());
-                        }
+                        dropList.addAll(linked.give());
+
                         continue;
                     }
                 }
                 CustomLootTable linked = CustomLootTable.getTable(linkedTable);
                 if (linked != null) {
-                    for (int j = 0; j < entry.getRolls(); j++) {
-                        dropList.addAll(linked.roll(rng));
-                    }
+                    dropList.addAll(linked.roll(rng));
+
                     continue;
                 }
             }

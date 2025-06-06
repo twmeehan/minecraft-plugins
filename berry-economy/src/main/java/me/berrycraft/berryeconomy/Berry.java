@@ -6,10 +6,12 @@ import me.berrycraft.berryeconomy.auction.windows.AuctionWindow;
 import me.berrycraft.berryeconomy.auction.windows.elements.Price;
 import me.berrycraft.berryeconomy.auction.windows.elements.Search;
 import me.berrycraft.berryeconomy.commands.AuctionCommand;
+import me.berrycraft.berryeconomy.commands.BerryCommand;
 import me.berrycraft.berryeconomy.commands.CustomLootCommand;
 import me.berrycraft.berryeconomy.commands.ExchangeCommand;
 import me.berrycraft.berryeconomy.commands.GambleCommand;
 import me.berrycraft.berryeconomy.commands.GiveCommand;
+import me.berrycraft.berryeconomy.custom_loot.BerryLoot;
 import me.berrycraft.berryeconomy.custom_loot.CustomLootEventHandler;
 import me.berrycraft.berryeconomy.custom_loot.CustomLootTable;
 import me.berrycraft.berryeconomy.custom_loot.WeightInputHandler;
@@ -19,6 +21,8 @@ import me.berrycraft.berryeconomy.items.RareCrate;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -41,12 +45,13 @@ import java.util.UUID;
 public final class Berry extends JavaPlugin {
 
     private static Berry instance;
+    File auctionFile;
+    FileConfiguration auctionConfig;
     @Override
     public void onEnable() {
 
         instance = this;
         getServer().getPluginManager().registerEvents(new CustomItemEventHandler(), this);
-        getServer().getPluginManager().registerEvents(new GiveCommand(), this);
         getServer().getPluginManager().registerEvents(new AuctionEventHandler(), this);
         getServer().getPluginManager().registerEvents(new Search(), this);
         getServer().getPluginManager().registerEvents(new Price(), this);
@@ -56,35 +61,8 @@ public final class Berry extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new CustomLootEventHandler(), this);
         getServer().getPluginManager().registerEvents(new WeightInputHandler(), this);
 
-
-        try {
-            if (!getDataFolder().exists()) {
-                getDataFolder().mkdirs();
-            }
-            File file = new File(getDataFolder(), "config.yml");
-            if (!file.exists()) {
-                getLogger().info("Config.yml not found, creating!");
-                saveDefaultConfig();
-            } else {
-                getLogger().info("Config.yml found, loading!");
-            }
-            CustomLootTable.init();
-        } catch (Exception e) {
-            e.printStackTrace();
-
-        }
-        for (String s : getConfig().getKeys(true) ) {
-            if (s.endsWith(".item")) {
-                String UUID = s.split(".item")[0];
-                AuctionWindow.marketEntries.add(new MarketEntry(java.util.UUID.fromString(UUID),
-                        getConfig().getItemStack(UUID+".item"),
-                        getConfig().getDouble(UUID+".price"),
-                        (OfflinePlayer)getConfig().get(UUID+".seller"),
-                        (OfflinePlayer)getConfig().get(UUID+".buyer"),
-                        LocalDateTime.parse(getConfig().getString(UUID+".expiration-date"))));
-            }
-        }
-
+        ensureScoreboardsExist();
+        this.initAuction();
 
         ExchangeCommand exchangeCommand = new ExchangeCommand();
         getServer().getPluginManager().registerEvents(exchangeCommand, this);
@@ -92,15 +70,16 @@ public final class Berry extends JavaPlugin {
         
         this.getCommand("auction").setExecutor(new AuctionCommand());
 
-        CustomLootCommand customLootCommand = new CustomLootCommand();
-        this.getCommand("customloot").setExecutor(customLootCommand);
-        this.getCommand("customloot").setTabCompleter(customLootCommand);
+        BerryCommand berryCommand = new BerryCommand();
+        this.getCommand("berry").setExecutor(berryCommand);
+        this.getCommand("berry").setTabCompleter(berryCommand);
 
         GambleCommand gambleCommand = new GambleCommand();
         getServer().getPluginManager().registerEvents(gambleCommand, this);
         this.getCommand("gamble").setExecutor(gambleCommand);
 
-        ensureScoreboardsExist();
+        BerryLoot.init();
+
 
     }
 
@@ -113,6 +92,54 @@ public final class Berry extends JavaPlugin {
     public static Berry getInstance() {
         return instance;
     }
+
+    public FileConfiguration getAuctionConfig() {
+        return auctionConfig;
+    }
+
+    public File getAuctionFile() {
+        return auctionFile;
+    }
+
+    public void initAuction() {
+    try {
+        if (!getDataFolder().exists()) {
+            getDataFolder().mkdirs();
+        }
+
+       auctionFile = new File(getDataFolder(), "auction.yml");
+
+        if (!auctionFile.exists()) {
+            getLogger().info("auction.yml not found, creating!");
+            auctionFile.createNewFile(); // creates empty file
+        } else {
+            getLogger().info("auction.yml found, loading!");
+        }
+
+        // Load the custom config
+        auctionConfig = YamlConfiguration.loadConfiguration(auctionFile);
+
+        // Load auction data
+        for (String s : auctionConfig.getKeys(true)) {
+            if (s.endsWith(".item")) {
+                String uuidKey = s.substring(0, s.length() - 5); // strip ".item"
+                AuctionWindow.marketEntries.add(new MarketEntry(
+                        java.util.UUID.fromString(uuidKey),
+                        auctionConfig.getItemStack(uuidKey + ".item"),
+                        auctionConfig.getDouble(uuidKey + ".price"),
+                        (OfflinePlayer) auctionConfig.get(uuidKey + ".seller"),
+                        (OfflinePlayer) auctionConfig.get(uuidKey + ".buyer"),
+                        LocalDateTime.parse(auctionConfig.getString(uuidKey + ".expiration-date"))
+                ));
+            }
+        }
+
+        CustomLootTable.init(); // if needed elsewhere
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+
 
     public static void ensureScoreboardsExist() {
         Scoreboard board = Bukkit.getScoreboardManager().getMainScoreboard();

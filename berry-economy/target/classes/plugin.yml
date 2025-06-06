@@ -13,8 +13,7 @@ commands:
   gamble:
     usage: /gamble
     description: purchase lootboxes
-  customloot:
-    description: Manage custom loot tables
-    usage: /customloot <create|delete> <name>
-    permission: berry.customloot
-    aliases: [cl]
+  berry:
+    description: Manage all custom BerryCraft admin commands
+    usage: /berry <give|table> <args>
+    permission: berry-economy.admin

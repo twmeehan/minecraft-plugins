@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
@@ -65,8 +66,13 @@ public class ConfirmPurchaseWindow extends Window {
             if (Raspberry.getAmount(viewer)*0.01+ Pinkberry.getAmount(viewer)*0.1+ Rainbowberry.getAmount(viewer)>entry.getPrice()) {
                 entry.setBuyer(viewer);
 
-                Berry.getInstance().getConfig().set(entry.getID().toString() + ".buyer", viewer);
+                Berry.getInstance().getAuctionConfig().set(entry.getID().toString() + ".buyer", viewer);
                 Berry.getInstance().saveConfig();
+                try {
+                    Berry.getInstance().getAuctionConfig().save(Berry.getInstance().getAuctionFile());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
                 BerryUtility.removeBerries(viewer,((int)(entry.getPrice()*100+0.5))/100.0);
                 BerryUtility.give(viewer, entry.getItem());

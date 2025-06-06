@@ -59,22 +59,22 @@ public class ExchangeCommand implements CommandExecutor, Listener {
         meta.setDisplayName(" ");
         empty.setItemMeta(meta);
 
-        ItemStack raspberry = new ItemStack(Material.COPPER_INGOT);
+        ItemStack raspberry = new Raspberry();
         meta = raspberry.getItemMeta();
         meta.setCustomModelData(1);
-        meta.setDisplayName(ChatColor.GRAY + "Convert to " + ChatColor.YELLOW + "Copper");
+        meta.setDisplayName(ChatColor.GRAY + "Convert to " + ChatColor.YELLOW + "Raspberry");
         raspberry.setItemMeta(meta);
 
-        ItemStack pinkberry = new ItemStack(Material.IRON_INGOT);
+        ItemStack pinkberry = new Pinkberry();
         meta = pinkberry.getItemMeta();
         meta.setCustomModelData(1);
-        meta.setDisplayName(ChatColor.GRAY + "Convert to " + ChatColor.YELLOW + "Silver");
+        meta.setDisplayName(ChatColor.GRAY + "Convert to " + ChatColor.YELLOW + "Pinkberry");
         pinkberry.setItemMeta(meta);
 
-        ItemStack rainbowberry = new ItemStack(Material.GOLD_INGOT);
+        ItemStack rainbowberry = new Rainbowberry();
         meta = rainbowberry.getItemMeta();
         meta.setCustomModelData(1);
-        meta.setDisplayName(ChatColor.GRAY + "Convert to " +  ChatColor.YELLOW + "Gold");
+        meta.setDisplayName(ChatColor.GRAY + "Convert to " +  ChatColor.YELLOW + "Rainbowberry");
         rainbowberry.setItemMeta(meta);
 
         ItemStack cancel = new ItemStack(Material.RED_TERRACOTTA);

@@ -18,6 +18,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
@@ -100,14 +101,22 @@ public class MyListingsWindow extends Window {
                     float pitch3 = 2.0f;
                     viewer.playSound(viewer, Sound.BLOCK_NOTE_BLOCK_CHIME,2.0f,Math.random() < 0.33 ? pitch1 : Math.random() > 0.5 ? pitch2 : pitch3);
                     AuctionWindow.marketEntries.remove(entry);
-                    Berry.getInstance().getConfig().set(entry.getID().toString(), null);
-                    Berry.getInstance().saveConfig();
+                    Berry.getInstance().getAuctionConfig().set(entry.getID().toString(), null);
+                    try {
+                        Berry.getInstance().getAuctionConfig().save(Berry.getInstance().getAuctionFile());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }     
                     updateListings();
                 } else if ((int) LocalDateTime.now().until(entry.getExpirationDate(), ChronoUnit.MINUTES)<0) {
                     BerryUtility.give(viewer,entry.getItem());
                     AuctionWindow.marketEntries.remove(entry);
-                    Berry.getInstance().getConfig().set(entry.getID().toString(), null);
-                    Berry.getInstance().saveConfig();
+                    Berry.getInstance().getAuctionConfig().set(entry.getID().toString(), null);
+                    try {
+                        Berry.getInstance().getAuctionConfig().save(Berry.getInstance().getAuctionFile());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }                    
                     updateListings();
                 } else {
                     AuctionEventHandler.openWindow(viewer,new CancelListingWindow(viewer, entry));

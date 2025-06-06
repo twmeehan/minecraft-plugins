@@ -14,6 +14,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 
 public class CreateListingWindow extends Window {
@@ -101,12 +102,16 @@ public class CreateListingWindow extends Window {
             //------------------------------------
             // adding ways to store info into json
             //------------------------------------
-            Berry.getInstance().getConfig().set(newEntry.getID().toString() + ".item", newEntry.getItem());
-            Berry.getInstance().getConfig().set(newEntry.getID().toString() + ".price", newEntry.getPrice());
-            Berry.getInstance().getConfig().set(newEntry.getID().toString() + ".seller", newEntry.getSeller());
-            Berry.getInstance().getConfig().set(newEntry.getID().toString() + ".buyer", newEntry.getBuyer());
-            Berry.getInstance().getConfig().set(newEntry.getID().toString() + ".expiration-date", newEntry.getExpirationDate().toString());
-            Berry.getInstance().saveConfig();
+            Berry.getInstance().getAuctionConfig().set(newEntry.getID().toString() + ".item", newEntry.getItem());
+            Berry.getInstance().getAuctionConfig().set(newEntry.getID().toString() + ".price", newEntry.getPrice());
+            Berry.getInstance().getAuctionConfig().set(newEntry.getID().toString() + ".seller", newEntry.getSeller());
+            Berry.getInstance().getAuctionConfig().set(newEntry.getID().toString() + ".buyer", newEntry.getBuyer());
+            Berry.getInstance().getAuctionConfig().set(newEntry.getID().toString() + ".expiration-date", newEntry.getExpirationDate().toString());
+            try {
+                Berry.getInstance().getAuctionConfig().save(Berry.getInstance().getAuctionFile());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
             AuctionEventHandler.openMyListingsWindow(viewer);
 

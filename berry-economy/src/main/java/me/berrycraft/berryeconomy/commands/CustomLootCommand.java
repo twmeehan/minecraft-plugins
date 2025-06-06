@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class CustomLootCommand implements CommandExecutor, TabCompleter {
 
@@ -62,7 +63,30 @@ public class CustomLootCommand implements CommandExecutor, TabCompleter {
                 sender.sendMessage(ChatColor.GREEN + "Deleted loot table: " + tableName);
                 break;
 
-            case "roll": {
+            case "roll": {      
+                // if (tableName.equals("berry_common") || tableName.equals("berry_uncommon") || tableName.equals("berry_rare") || tableName.equals("berry_legendary")) {
+                    
+                //     LinkedList<ItemStack> drops;
+                //     if (tableName.equals("berry_common"))
+                //         drops = BerryLoot.getCommon();
+                //     else if (tableName.equals("berry_uncommon"))
+                //         drops = BerryLoot.getUncommon();
+                //     else if (tableName.equals("berry_rare"))
+                //         drops = BerryLoot.getRare();
+                //     else
+                //         drops = BerryLoot.getLegendary();
+                //     Inventory inv = Bukkit.createInventory(null, 27, "Rolled Loot: " + tableName);
+                //     int i = 0;
+                //     for (ItemStack item : drops) {
+                //         inv.setItem(i, item);
+                //         i++;
+                //         if (i >= inv.getSize()) break;
+                //     }
+
+                //     player.openInventory(inv);
+                //     return true;
+                // }
+
                 CustomLootTable table = CustomLootTable.getTable(tableName);
                 if (table == null) {
                     player.sendMessage(ChatColor.RED + "Loot table not found: " + tableName);
@@ -83,6 +107,30 @@ public class CustomLootCommand implements CommandExecutor, TabCompleter {
                 break;
             }
             case "give": {
+
+                // if (tableName.equals("berry_common") || tableName.equals("berry_uncommon") || tableName.equals("berry_rare") || tableName.equals("berry_legendary")) {
+                    
+                //     LinkedList<ItemStack> drops;
+                //     if (tableName.equals("berry_common"))
+                //         drops = BerryLoot.getCommon();
+                //     else if (tableName.equals("berry_uncommon"))
+                //         drops = BerryLoot.getUncommon();
+                //     else if (tableName.equals("berry_rare"))
+                //         drops = BerryLoot.getRare();
+                //     else
+                //         drops = BerryLoot.getLegendary();
+                //     Inventory inv = Bukkit.createInventory(null, 27, "Rolled Loot: " + tableName);
+                //     int i = 0;
+                //     for (ItemStack item : drops) {
+                //         inv.setItem(i, item);
+                //         i++;
+                //         if (i >= inv.getSize()) break;
+                //     }
+
+                //     player.openInventory(inv);
+                //     return true;
+                // }
+
                 CustomLootTable table = CustomLootTable.getTable(tableName);
                 if (table == null) {
                     player.sendMessage(ChatColor.RED + "Loot table not found: " + tableName);
@@ -104,7 +152,7 @@ public class CustomLootCommand implements CommandExecutor, TabCompleter {
 
             }
             default:
-                sender.sendMessage(ChatColor.RED + "Invalid action. Use 'create', 'edit', or 'delete'.");
+                sender.sendMessage(ChatColor.RED + "Invalid action.");
         }
 
         return true;
@@ -113,7 +161,7 @@ public class CustomLootCommand implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
-            return Arrays.asList("create", "edit", "delete","roll").stream()
+            return Arrays.asList("create", "edit", "delete","roll","give").stream()
                     .filter(option -> option.startsWith(args[0].toLowerCase()))
                     .collect(Collectors.toList());
         }
@@ -123,6 +171,16 @@ public class CustomLootCommand implements CommandExecutor, TabCompleter {
                     .filter(name -> name.toLowerCase().startsWith(args[1].toLowerCase()))
                     .collect(Collectors.toList());
         }
+        // if (args.length == 2) {
+        //     Stream<String> tableNames = CustomLootTable.getTables().keySet().stream()
+        //         .filter(name -> name.toLowerCase().startsWith(args[1].toLowerCase()));
+
+        //     Stream<String> extraNames = Stream.of("berry_common", "berry_uncommon", "berry_rare", "berry_legendary")
+        //         .filter(name -> name.toLowerCase().startsWith(args[1].toLowerCase()));
+
+        //     return Stream.concat(tableNames, extraNames)
+        //         .collect(Collectors.toList());
+        // }
 
         return new ArrayList<>();
     }

@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
@@ -52,9 +53,13 @@ public class CancelListingWindow extends Window {
             entry.setBuyer(viewer);
             AuctionWindow.marketEntries.remove(entry);
             BerryUtility.give(viewer,entry.getItem());
-            Berry.getInstance().getConfig().set(entry.getID().toString(), null);
+            Berry.getInstance().getAuctionConfig().set(entry.getID().toString(), null);
 
-            Berry.getInstance().saveConfig();
+            try {
+                Berry.getInstance().getAuctionConfig().save(Berry.getInstance().getAuctionFile());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }            
             AuctionEventHandler.openMyListingsWindow(viewer);
         }
 
