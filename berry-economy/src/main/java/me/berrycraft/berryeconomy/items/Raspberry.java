@@ -9,6 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 /*
  * Raspberry is a custom item that is a part of
  * the currency of berrycraft. It is worth 0.1 of a pinkberry
@@ -58,6 +59,18 @@ public class Raspberry extends CustomItem{
     public static int getAmount(Player p) {
         int total = 0;
         for (ItemStack stack : p.getInventory().getContents()) {
+            if (stack== null || stack.getType()!=Material.PLAYER_HEAD) continue;
+            else {
+                NBTItem nbti = new NBTItem(stack);
+                total += nbti.getString("CustomItem").equals("Raspberry") ? stack.getAmount() : 0;
+            }
+        }
+        return total;
+
+    }
+    public static int getAmount(LinkedList<ItemStack> items) {
+        int total = 0;
+        for (ItemStack stack : items) {
             if (stack== null || stack.getType()!=Material.PLAYER_HEAD) continue;
             else {
                 NBTItem nbti = new NBTItem(stack);

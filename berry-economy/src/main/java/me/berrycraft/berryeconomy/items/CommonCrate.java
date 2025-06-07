@@ -32,6 +32,7 @@ import de.tr7zw.nbtapi.NBTItem;
 import me.berrycraft.berryeconomy.Berry;
 import me.berrycraft.berryeconomy.BerryUtility;
 import me.berrycraft.berryeconomy.custom_loot.CustomLootTable;
+import me.berrycraft.berryeconomy.custom_loot.RigLoot;
 
 public class CommonCrate extends CustomItem implements Listener{
 
@@ -158,7 +159,10 @@ public class CommonCrate extends CustomItem implements Listener{
                     );
                     stand.remove(); // clean up
                     this.cancel();
-                    double rand_num = Math.random();
+                    double rand_num = -1.0;
+                    rand_num = RigLoot.check(p, "common_crate");
+                    rand_num = rand_num > 0 ? rand_num : Math.random();
+                    
                     if (rand_num < 0.5) {
                         dropLoot(loc, "loot_common");
                         

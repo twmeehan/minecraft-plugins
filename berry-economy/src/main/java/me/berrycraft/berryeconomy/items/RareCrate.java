@@ -30,6 +30,7 @@ import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.NBTItem;
 import me.berrycraft.berryeconomy.Berry;
 import me.berrycraft.berryeconomy.custom_loot.CustomLootTable;
+import me.berrycraft.berryeconomy.custom_loot.RigLoot;
 
 public class RareCrate extends CustomItem  implements Listener{
 
@@ -159,7 +160,10 @@ public class RareCrate extends CustomItem  implements Listener{
                     );
                     stand.remove(); // clean up
                     this.cancel();
-                    double rand_num = Math.random();
+                    double rand_num = -1.0;
+                    rand_num = RigLoot.check(p, "rare_crate");
+                    rand_num = rand_num > 0 ? rand_num : Math.random();
+
                     if (rand_num < 0.3) {
                         dropLoot(loc, "loot_uncommon");
                         stand.getWorld().spawnParticle(

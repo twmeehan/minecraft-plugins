@@ -11,6 +11,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.MaterialData;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.UUID;
 
 /*
@@ -62,6 +63,18 @@ public class Rainbowberry extends CustomItem {
     public static int getAmount(Player p) {
         int total = 0;
         for (ItemStack stack : p.getInventory().getContents()) {
+            if (stack== null || stack.getType()!=Material.PLAYER_HEAD) continue;
+            else {
+                NBTItem nbti = new NBTItem(stack);
+                total += nbti.getString("CustomItem").equals("Rainbowberry") ? stack.getAmount() : 0;
+            }
+        }
+        return total;
+
+    }
+    public static int getAmount(LinkedList<ItemStack> items) {
+        int total = 0;
+        for (ItemStack stack : items) {
             if (stack== null || stack.getType()!=Material.PLAYER_HEAD) continue;
             else {
                 NBTItem nbti = new NBTItem(stack);

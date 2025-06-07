@@ -23,6 +23,7 @@ import me.berrycraft.berryeconomy.items.Pinkberry;
 import me.berrycraft.berryeconomy.items.Rainbowberry;
 import me.berrycraft.berryeconomy.items.RareCrate;
 import me.berrycraft.berryeconomy.items.Raspberry;
+import me.berrycraft.berryeconomy.logs.PurchaseLogs;
 import net.md_5.bungee.api.ChatColor;
 
 public class GambleCommand implements CommandExecutor, Listener {
@@ -48,7 +49,7 @@ public class GambleCommand implements CommandExecutor, Listener {
         ArrayList<String> lore = new ArrayList<>();
         lore.add(ChatColor.GRAY + "");
         // get stats from scoreboard
-        lore.add(ChatColor.GRAY + "Price: " + ChatColor.GOLD +"2.0$");
+        lore.add(ChatColor.GRAY + "Price: " + ChatColor.GOLD +"100$");
         lore.add(ChatColor.GRAY + "");
         lore.add(ChatColor.YELLOW + "50%" + ChatColor.GRAY + " chance for" + ChatColor.WHITE + " Common");
         lore.add(ChatColor.YELLOW + "35%" + ChatColor.GRAY + " chance for" + ChatColor.DARK_AQUA +  " Uncommon");
@@ -62,7 +63,7 @@ public class GambleCommand implements CommandExecutor, Listener {
         lore = new ArrayList<>();
         lore.add(ChatColor.GRAY + "");
         // get stats from scoreboard
-        lore.add(ChatColor.GRAY + "Price: " + ChatColor.GOLD +"8.0$");
+        lore.add(ChatColor.GRAY + "Price: " + ChatColor.GOLD +"800$");
         lore.add(ChatColor.GRAY + "");
 
         lore.add(ChatColor.YELLOW + "30%" + ChatColor.GRAY + " chance for" + ChatColor.DARK_AQUA + " Uncommon");
@@ -95,6 +96,7 @@ public class GambleCommand implements CommandExecutor, Listener {
                     p.sendMessage(ChatColor.GREEN + "Purchased!");
                     BerryUtility.give(p,new CommonCrate());
                     BerryUtility.removeBerries(p, 1);
+                    PurchaseLogs.logPurchase(p,"COMMON_CRATE",100);
 
 
                 } else {
@@ -105,6 +107,8 @@ public class GambleCommand implements CommandExecutor, Listener {
                     p.sendMessage(ChatColor.GREEN + "Purchased!");
                     BerryUtility.give(p,new RareCrate());
                     BerryUtility.removeBerries(p, 8);
+                    PurchaseLogs.logPurchase(p,"RARE_CRATE",800);
+
 
 
                 } else {

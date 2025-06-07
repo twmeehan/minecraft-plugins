@@ -68,7 +68,7 @@ public class Price extends Element implements Listener {
             Price s = playersEnteringPrice.get(e.getPlayer());
 
             try {
-                s.price = Double.parseDouble(e.getMessage());
+                s.price = Integer.parseInt(e.getMessage())*0.01;
             } catch (NumberFormatException exception) {
                 return;
             }
@@ -100,9 +100,9 @@ public class Price extends Element implements Listener {
         ArrayList<String> lore = new ArrayList<>();
         lore.add(ChatColor.GRAY + "");
         if (price <= 0) {
-            lore.add(ChatColor.GRAY + "Cost: " + ChatColor.RED + "0.00");
+            lore.add(ChatColor.GRAY + "Cost: " + ChatColor.RED + "0");
         } else {
-            lore.add(ChatColor.GRAY + "Cost: " + ChatColor.GOLD + Math.round(price*100)*0.01);
+            lore.add(ChatColor.GRAY + "Cost: " + ChatColor.GOLD + Math.round(price*100));
 
         }
         lore.add(ChatColor.GRAY + "");

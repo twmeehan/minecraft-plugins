@@ -4,6 +4,7 @@ import me.berrycraft.berryeconomy.Berry;
 import me.berrycraft.berryeconomy.items.Pinkberry;
 import me.berrycraft.berryeconomy.items.Rainbowberry;
 import me.berrycraft.berryeconomy.items.Raspberry;
+import me.berrycraft.berryeconomy.logs.LootLogs;
 import net.md_5.bungee.api.chat.ClickEvent;
 
 import org.bukkit.Bukkit;
@@ -41,7 +42,9 @@ public class BerryLoot implements Listener {
             LootTable table = ((Chest)e.getClickedBlock().getState()).getLootTable();
             if (table!=null) {
                 Inventory inventory = ((Chest)e.getClickedBlock().getState()).getBlockInventory();
-                placeItemsRandomly(inventory, BerryLoot.generateLoot(table.toString()));
+                LinkedList<ItemStack> berries = BerryLoot.generateLoot(table.toString());
+                LootLogs.logLoot(e.getPlayer(), table.toString(), Rainbowberry.getAmount(berries)*100+Pinkberry.getAmount(berries)*10+Raspberry.getAmount(berries));
+                placeItemsRandomly(inventory, berries);
 
             }
         } else if (e.getClickedBlock()!= null && (e.getClickedBlock().getType()==Material.BARREL)) {
@@ -49,7 +52,9 @@ public class BerryLoot implements Listener {
 
             if (table!=null) {
                 Inventory inventory = ((Barrel)e.getClickedBlock().getState()).getInventory();
-                placeItemsRandomly(inventory, BerryLoot.generateLoot(table.toString()));
+                LinkedList<ItemStack> berries = BerryLoot.generateLoot(table.toString());
+                LootLogs.logLoot(e.getPlayer(), table.toString(), Rainbowberry.getAmount(berries)*100+Pinkberry.getAmount(berries)*10+Raspberry.getAmount(berries));
+                placeItemsRandomly(inventory, berries);
 
 
             }

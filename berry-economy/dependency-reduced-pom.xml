@@ -34,6 +34,7 @@
               <artifactSet>
                 <includes>
                   <include>org.xerial:sqlite-jdbc</include>
+                  <include>com.mysql:mysql-connector-j</include>
                 </includes>
               </artifactSet>
             </configuration>

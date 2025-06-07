@@ -3,6 +3,7 @@ package me.berrycraft.berryeconomy.commands;
 import me.berrycraft.berryeconomy.custom_loot.CustomLootEventHandler;
 import me.berrycraft.berryeconomy.custom_loot.CustomLootTable;
 import me.berrycraft.berryeconomy.custom_loot.CustomLootTableWindow;
+import me.berrycraft.berryeconomy.custom_loot.RigLoot;
 import me.berrycraft.berryeconomy.items.CommonCrate;
 import me.berrycraft.berryeconomy.items.Pinkberry;
 import me.berrycraft.berryeconomy.items.Rainbowberry;
@@ -49,11 +50,38 @@ public class BerryCommand implements TabExecutor {
             case "table":
                 handleTable(player, args);
                 break;
+            case "rig":
+                handleRig(player, args);
+                break;
             default:
                 player.sendMessage(ChatColor.RED + "Invalid subcommand: " + subcommand);
         }
 
         return true;
+    }
+
+    private void handleRig(Player sender, String[] args) {
+        if (args.length != 4) {
+            return;
+        }
+
+        Player target = Bukkit.getPlayerExact(args[1]);
+        if (target == null) {
+            sender.sendMessage(ChatColor.RED + "Player not found.");
+            return;
+        }
+
+        String crate = args[2];
+        double value;
+        try {
+            value = Double.parseDouble(args[3]);
+        } catch (NumberFormatException e) {
+            sender.sendMessage(ChatColor.RED + "Value must be an integer between 1 and 5.");
+            return;
+        }
+
+        RigLoot.set(target, crate, value);
+        sender.sendMessage(ChatColor.GREEN + "Rigged loot for " + target.getName() + " on crate '" + crate + "' to rarity " + value + ".");
     }
 
     private void handleGive(Player sender, String[] args) {

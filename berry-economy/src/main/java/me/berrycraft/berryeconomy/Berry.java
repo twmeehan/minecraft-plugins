@@ -14,11 +14,15 @@ import me.berrycraft.berryeconomy.commands.GiveCommand;
 import me.berrycraft.berryeconomy.custom_loot.BerryLoot;
 import me.berrycraft.berryeconomy.custom_loot.CustomLootEventHandler;
 import me.berrycraft.berryeconomy.custom_loot.CustomLootTable;
+import me.berrycraft.berryeconomy.custom_loot.RigLoot;
 import me.berrycraft.berryeconomy.custom_loot.WeightInputHandler;
 import me.berrycraft.berryeconomy.items.CommonCrate;
 import me.berrycraft.berryeconomy.items.CustomItemEventHandler;
 import me.berrycraft.berryeconomy.items.RareCrate;
+import me.berrycraft.berryeconomy.logs.AuctionLogs;
+import me.berrycraft.berryeconomy.logs.LootLogs;
 import me.berrycraft.berryeconomy.logs.PlayerActivityLogs;
+import me.berrycraft.berryeconomy.logs.PurchaseLogs;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -50,6 +54,9 @@ public final class Berry extends JavaPlugin {
     File auctionFile;
     FileConfiguration auctionConfig;
     private PlayerActivityLogs playerActivityLogs ;
+    private AuctionLogs auctionLogs;
+    private PurchaseLogs purchaseLogs;
+    private LootLogs lootLogs;
     @Override
     public void onEnable() {
 
@@ -82,25 +89,72 @@ public final class Berry extends JavaPlugin {
         this.getCommand("gamble").setExecutor(gambleCommand);
 
         BerryLoot.init();
+        RigLoot.init();
 
         // Player join and leave logs
-        try {
-            playerActivityLogs = new PlayerActivityLogs("db-buf-04.sparkedhost.us:3306", "u176279_AzqIUqrWkU", "aIJ9YG9eY!nrLpu6GL+CnaMZ");
+        tryRegisterActivityLogs("jdbc:mysql://db-buf-04.sparkedhost.us:3306/s176279_berry", "u176279_AzqIUqrWkU", "aIJ9YG9eY!nrLpu6GL+CnaMZ");
+        tryRegisterAuctionLogs("jdbc:mysql://db-buf-04.sparkedhost.us:3306/s176279_berry", "u176279_AzqIUqrWkU", "aIJ9YG9eY!nrLpu6GL+CnaMZ");
+        tryRegisterPurchaseLogs("jdbc:mysql://db-buf-04.sparkedhost.us:3306/s176279_berry", "u176279_AzqIUqrWkU", "aIJ9YG9eY!nrLpu6GL+CnaMZ");
+        tryRegisterLootLogs("jdbc:mysql://db-buf-04.sparkedhost.us:3306/s176279_berry", "u176279_AzqIUqrWkU", "aIJ9YG9eY!nrLpu6GL+CnaMZ");
 
+    }
+
+    public void tryRegisterActivityLogs(String url, String user, String password) {
+        try {
+            playerActivityLogs = new PlayerActivityLogs(url, user, password);
         } catch (SQLException e) {
             e.printStackTrace();
         }
         if (playerActivityLogs != null) {
+
             getServer().getPluginManager().registerEvents(playerActivityLogs, this);
+            // Undo any false QUIT logs due to reload
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                playerActivityLogs.removeLastQuitLog(player.getUniqueId());
+            }
         }
+    }
 
+    public void tryRegisterAuctionLogs(String url, String user, String password) {
+        try {
+            auctionLogs = new AuctionLogs(url, user, password);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
+    public void tryRegisterPurchaseLogs(String url, String user, String password) {
+        try {
+            purchaseLogs = new PurchaseLogs(url, user, password);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void tryRegisterLootLogs(String url, String user, String password) {
+        try {
+            lootLogs = new LootLogs(url, user, password);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onDisable() {
 
+        if (playerActivityLogs != null) {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            playerActivityLogs.logEvent(player.getUniqueId(), player.getName(), "QUIT");
+        }
+        playerActivityLogs.close();
+    }
+
         if (playerActivityLogs != null) playerActivityLogs.close();
+        if (auctionLogs != null) auctionLogs.close();
+        if (purchaseLogs != null) purchaseLogs.close();
+        if (lootLogs != null) lootLogs.close();
+
+
 
     }
 

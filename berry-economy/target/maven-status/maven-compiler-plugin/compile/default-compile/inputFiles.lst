@@ -5,6 +5,7 @@
 /Users/timothy/Documents/Java Workspace/minecraft/BerryCraft/berry-economy/src/main/java/me/berrycraft/berryeconomy/commands/AuctionCommand.java
 /Users/timothy/Documents/Java Workspace/minecraft/BerryCraft/berry-economy/src/main/java/me/berrycraft/berryeconomy/commands/BerryCommand.java
 /Users/timothy/Documents/Java Workspace/minecraft/BerryCraft/berry-economy/src/main/java/me/berrycraft/berryeconomy/items/RareCrate.java
+/Users/timothy/Documents/Java Workspace/minecraft/BerryCraft/berry-economy/src/main/java/me/berrycraft/berryeconomy/logs/LootLogs.java
 /Users/timothy/Documents/Java Workspace/minecraft/BerryCraft/berry-economy/src/main/java/me/berrycraft/berryeconomy/commands/ExchangeCommand.java
 /Users/timothy/Documents/Java Workspace/minecraft/BerryCraft/berry-economy/src/main/java/me/berrycraft/berryeconomy/auction/MarketEntry.java
 /Users/timothy/Documents/Java Workspace/minecraft/BerryCraft/berry-economy/src/main/java/me/berrycraft/berryeconomy/custom_loot/CustomLootEventHandler.java
@@ -16,6 +17,7 @@
 /Users/timothy/Documents/Java Workspace/minecraft/BerryCraft/berry-economy/src/main/java/me/berrycraft/berryeconomy/custom_loot/BerryLoot.java
 /Users/timothy/Documents/Java Workspace/minecraft/BerryCraft/berry-economy/src/main/java/me/berrycraft/berryeconomy/commands/GambleCommand.java
 /Users/timothy/Documents/Java Workspace/minecraft/BerryCraft/berry-economy/src/main/java/me/berrycraft/berryeconomy/custom_loot/WeightInputHandler.java
+/Users/timothy/Documents/Java Workspace/minecraft/BerryCraft/berry-economy/src/main/java/me/berrycraft/berryeconomy/logs/PurchaseLogs.java
 /Users/timothy/Documents/Java Workspace/minecraft/BerryCraft/berry-economy/src/main/java/me/berrycraft/berryeconomy/auction/windows/CancelListingWindow.java
 /Users/timothy/Documents/Java Workspace/minecraft/BerryCraft/berry-economy/src/main/java/me/berrycraft/berryeconomy/Berry.java
 /Users/timothy/Documents/Java Workspace/minecraft/BerryCraft/berry-economy/src/main/java/me/berrycraft/berryeconomy/items/CustomItemEventHandler.java
@@ -25,9 +27,11 @@
 /Users/timothy/Documents/Java Workspace/minecraft/BerryCraft/berry-economy/src/main/java/me/berrycraft/berryeconomy/auction/windows/ConfirmPurchaseWindow.java
 /Users/timothy/Documents/Java Workspace/minecraft/BerryCraft/berry-economy/src/main/java/me/berrycraft/berryeconomy/items/Pinkberry.java
 /Users/timothy/Documents/Java Workspace/minecraft/BerryCraft/berry-economy/src/main/java/me/berrycraft/berryeconomy/auction/windows/elements/Search.java
+/Users/timothy/Documents/Java Workspace/minecraft/BerryCraft/berry-economy/src/main/java/me/berrycraft/berryeconomy/logs/AuctionLogs.java
 /Users/timothy/Documents/Java Workspace/minecraft/BerryCraft/berry-economy/src/main/java/me/berrycraft/berryeconomy/auction/windows/AuctionWindow.java
 /Users/timothy/Documents/Java Workspace/minecraft/BerryCraft/berry-economy/src/main/java/me/berrycraft/berryeconomy/auction/windows/elements/Stats.java
 /Users/timothy/Documents/Java Workspace/minecraft/BerryCraft/berry-economy/src/main/java/me/berrycraft/berryeconomy/custom_loot/CustomLootTable.java
+/Users/timothy/Documents/Java Workspace/minecraft/BerryCraft/berry-economy/src/main/java/me/berrycraft/berryeconomy/custom_loot/RigLoot.java
 /Users/timothy/Documents/Java Workspace/minecraft/BerryCraft/berry-economy/src/main/java/me/berrycraft/berryeconomy/commands/GiveCommand.java
 /Users/timothy/Documents/Java Workspace/minecraft/BerryCraft/berry-economy/src/main/java/me/berrycraft/berryeconomy/auction/AuctionEventHandler.java
 /Users/timothy/Documents/Java Workspace/minecraft/BerryCraft/berry-economy/src/main/java/me/berrycraft/berryeconomy/custom_loot/CustomLootTableEntry.java

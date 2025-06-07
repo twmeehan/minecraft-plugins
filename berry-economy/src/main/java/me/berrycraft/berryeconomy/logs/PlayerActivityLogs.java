@@ -51,4 +51,18 @@ public class PlayerActivityLogs implements Listener {
         Player player = event.getPlayer();
         this.logEvent(player.getUniqueId(), player.getName(), "QUIT");
     }
+
+    public void removeLastQuitLog(UUID uuid) {
+        String sql = "DELETE FROM player_activity " +
+                    "WHERE id = (SELECT id FROM (" +
+                    "SELECT id FROM player_activity WHERE uuid = ? AND event_type = 'QUIT' " +
+                    "ORDER BY event_time DESC LIMIT 1) AS sub)";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, uuid.toString());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
