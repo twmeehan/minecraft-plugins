@@ -1,0 +1,13 @@
+name: DynamicSpells
+version: '1.0'
+main: me.berrycraft.dynamicspells.DynamicSpells
+api-version: '1.21'
+commands:
+  cast:
+    description: Casts a spell
+    usage: /cast <spell> <level>
+    permission: dynamicspells.cast
+  spellbook:
+    description: Gives a spellbook
+    usage: /spellbook <spell_name> <level>
+    permission: dynamicspells.spellbook

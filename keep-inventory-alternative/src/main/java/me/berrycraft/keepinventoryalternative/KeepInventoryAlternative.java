@@ -115,6 +115,7 @@ public class KeepInventoryAlternative extends JavaPlugin implements Listener {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         event.setKeepInventory(true);
+        event.setKeepLevel(true);
         Player player = event.getEntity();
         double currentHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
         if (currentHealth > 10.0) {
