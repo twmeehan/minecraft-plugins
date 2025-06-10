@@ -1,4 +1,0 @@
-name: bug-fixes
-version: '${project.version}'
-main: me.berrycraft.bugfixes.Fixes
-api-version: '1.20'
