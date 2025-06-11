@@ -58,8 +58,8 @@ public class CustomLootTable {
             ItemStack item = entry.getItem();
             ItemMeta meta = item.getItemMeta();
             NBTItem nbti = new NBTItem(item);
+
             if (nbti.getString("CustomItem").equals("spell_book")) {
-                Bukkit.broadcastMessage("hello world");
                 String spell = nbti.getString("Spell");
                 int level = nbti.getInteger("Level");
                 item = DynamicSpells.getSpellBook(spell,level);
@@ -110,6 +110,13 @@ public class CustomLootTable {
         for (int i = 0; i < entry.getRolls(); i++) {
             ItemStack item = entry.getItem().clone();
             ItemMeta meta = item.getItemMeta();
+            NBTItem nbti = new NBTItem(item);
+            if (nbti.getString("CustomItem").equals("spell_book")) {
+
+                String spell = nbti.getString("Spell");
+                int level = nbti.getInteger("Level");
+                item = DynamicSpells.getSpellBook(spell,level);
+            }
             if (meta != null && meta.hasDisplayName() && meta.getDisplayName().endsWith(".yml")) {
                 String linkedTable = meta.getDisplayName().replace(".yml", "");
                 if (linkedTable.charAt(0)=='*') {
