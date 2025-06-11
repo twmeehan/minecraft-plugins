@@ -16,6 +16,8 @@ import me.berrycraft.dynamicspells.Spells.Heal;
 import me.berrycraft.dynamicspells.Spells.Laser;
 import me.berrycraft.dynamicspells.Spells.Dash;
 import me.berrycraft.dynamicspells.Spells.BodySlam;
+import me.berrycraft.dynamicspells.Spells.Mutilate;
+
 
 public final class DynamicSpells extends JavaPlugin {
 
@@ -32,6 +34,7 @@ public final class DynamicSpells extends JavaPlugin {
         SPELLS.add(Laser.class);
         SPELLS.add(Dash.class);
         SPELLS.add(BodySlam.class);
+        SPELLS.add(Mutilate.class);
 
         instance = this;
 
