@@ -93,7 +93,7 @@ public class Mutilate extends Spell implements IExecutableSpell {
                         swipeCount[0]++;
                     }
                 },
-                0L, 8L // 8 ticks = 0.4 seconds between dashes
+                0L, 4L // 8 ticks = 0.4 seconds between dashes
         );
     }
 
@@ -124,7 +124,7 @@ public class Mutilate extends Spell implements IExecutableSpell {
             speed = Math.min(distance * 3.5, 6.0); // first dash = big leap!
         } else {
             // Subsequent dashes: quick reposition without overshooting
-            speed = Math.min(distance * 0.75, 2.0); // reduced dash speed
+            speed = Math.min(distance * .2, 2.0); // reduced dash speed
         }
 
         // Make the player face the target
@@ -134,10 +134,9 @@ public class Mutilate extends Spell implements IExecutableSpell {
         // Update both the server-side and client-side rotation
         caster.teleport(lookLocation);
         caster.setRotation(lookLocation.getYaw(), lookLocation.getPitch());
-
         // Launch the player
         Vector velocity = direction.multiply(speed);
-        velocity.setY(0.3); // Slight upward lift
+        velocity.setY(0.1); // Slight upward lift
         caster.setVelocity(velocity);
 
         drawTrail(start, end);

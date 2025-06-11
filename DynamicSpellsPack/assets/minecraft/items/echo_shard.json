@@ -9,7 +9,7 @@
     },
     "on_false": {
       "type": "minecraft:model",
-      "model": "minecraft:item/ender_pearl"
+      "model": "minecraft:item/echo_shard"
     }
   }
 }
