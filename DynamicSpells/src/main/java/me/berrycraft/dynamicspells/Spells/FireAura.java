@@ -18,6 +18,7 @@ import me.berrycraft.dynamicspells.DynamicSpells;
 import me.berrycraft.dynamicspells.IExecutableSpell;
 import me.berrycraft.dynamicspells.Spell;
 import me.berrycraft.dynamicspells.SpellEngine;
+import me.berrycraft.dynamicspells.SpellDamageType;;
 
 public class FireAura extends Spell implements IExecutableSpell, Listener {
 
@@ -84,7 +85,7 @@ public class FireAura extends Spell implements IExecutableSpell, Listener {
       for (Entity entity : caster.getWorld().getNearbyEntities(caster.getLocation(), radius, radius, radius)) {
         if (entity instanceof LivingEntity && entity != caster) {
           LivingEntity target = (LivingEntity) entity;
-          SpellEngine.damage(caster,target,damage * 2);
+          SpellEngine.damage(caster, target, damage * 2, SpellDamageType.MAGIC);
           // target.setFireTicks(20); // Set on fire for 1 second
         }
       }

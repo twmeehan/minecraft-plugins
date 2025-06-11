@@ -20,6 +20,7 @@ import org.bukkit.Color;
 import me.berrycraft.dynamicspells.DynamicSpells;
 import me.berrycraft.dynamicspells.IExecutableSpell;
 import me.berrycraft.dynamicspells.Spell;
+import me.berrycraft.dynamicspells.SpellDamageType;
 import me.berrycraft.dynamicspells.SpellEngine;
 
 public class BodySlam extends Spell implements IExecutableSpell, Listener {
@@ -140,9 +141,11 @@ public class BodySlam extends Spell implements IExecutableSpell, Listener {
         LivingEntity target = (LivingEntity) entity;
         double distance = target.getLocation().distance(caster.getLocation());
         if (distance <= radius) {
-          // Damage falls off with distance
-          double damageMultiplier = 1.0 - (distance / radius);
-          target.damage(damage * damageMultiplier, caster);
+          double normalizedDistance = distance / radius;
+          double damageMultiplier = 1.0 - (normalizedDistance * normalizedDistance);
+          damageMultiplier = Math.max(damageMultiplier, 0.5);
+
+          SpellEngine.damage(caster, target, damage * damageMultiplier, SpellDamageType.NORMAL);
 
           // Knockback effect
           Vector knockback = target.getLocation().subtract(caster.getLocation()).toVector();
