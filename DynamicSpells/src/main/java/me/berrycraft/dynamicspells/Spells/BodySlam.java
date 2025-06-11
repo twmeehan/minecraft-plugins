@@ -127,8 +127,8 @@ public class BodySlam extends Spell implements IExecutableSpell, Listener {
 
           // Knockback effect
           Vector knockback = target.getLocation().subtract(caster.getLocation()).toVector();
-          knockback.setY(1.5); // Strong upward force
-          knockback.normalize().multiply(1.5); // Normalize and scale
+          knockback.setY(verticalBoost); // Strong upward force
+          knockback.normalize().multiply(0.8); // Normalize and scale
           target.setVelocity(knockback);
         }
       }
