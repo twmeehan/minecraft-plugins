@@ -5,11 +5,11 @@
     "component": "minecraft:custom_model_data",
     "on_true": {
       "type": "minecraft:model",
-      "model": "dynamic_spells:item/fireaura"
+      "model": "dynamic_spells:item/bodyslam"
     },
     "on_false": {
       "type": "minecraft:model",
-      "model": "minecraft:item/blaze_powder"
+      "model": "minecraft:item/iron_ingot"
     }
   }
 }
