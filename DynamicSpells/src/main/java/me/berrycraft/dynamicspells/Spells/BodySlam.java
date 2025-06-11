@@ -20,12 +20,13 @@ import org.bukkit.Color;
 import me.berrycraft.dynamicspells.DynamicSpells;
 import me.berrycraft.dynamicspells.IExecutableSpell;
 import me.berrycraft.dynamicspells.Spell;
+import me.berrycraft.dynamicspells.SpellDamageType;
 import me.berrycraft.dynamicspells.SpellEngine;
 
 public class BodySlam extends Spell implements IExecutableSpell, Listener {
 
   public static final String NAME = "bodyslam";
-  public static final Material MATERIAL = Material.ANVIL;
+  public static final Material MATERIAL = Material.IRON_INGOT;
   public static YamlConfiguration config;
 
   private Player caster;
@@ -68,15 +69,6 @@ public class BodySlam extends Spell implements IExecutableSpell, Listener {
 
     // Play sound and particles for the initial boost
     caster.getWorld().playSound(caster.getLocation(), Sound.ENTITY_IRON_GOLEM_ATTACK, 1.0f, 0.5f);
-
-    // Create iron block particles for the initial boost
-    for (int i = 0; i < 20; i++) {
-      caster.getWorld().spawnParticle(
-          Particle.BLOCK,
-          caster.getLocation().add(0, 1, 0),
-          1, 0.3, 0.3, 0.3, 0,
-          Material.IRON_BLOCK.createBlockData());
-    }
   }
 
   @Override
@@ -116,21 +108,6 @@ public class BodySlam extends Spell implements IExecutableSpell, Listener {
 
         // Main explosion particles
         caster.getWorld().spawnParticle(Particle.CLOUD, particleLoc, 1, 0, 0, 0, 0);
-        // Main explosion particles (iron blocks)
-        caster.getWorld().spawnParticle(
-            Particle.BLOCK,
-            particleLoc,
-            1, 0, 0, 0, 0,
-            Material.IRON_BLOCK.createBlockData());
-
-        // Add some anvil particles for effect
-        if (r > radius * 0.7) { // Only on the outer ring
-          caster.getWorld().spawnParticle(
-              Particle.BLOCK,
-              particleLoc.clone().add(0, 0.5, 0),
-              1, 0.1, 0.1, 0.1, 0,
-              Material.ANVIL.createBlockData());
-        }
       }
     }
 
@@ -140,9 +117,11 @@ public class BodySlam extends Spell implements IExecutableSpell, Listener {
         LivingEntity target = (LivingEntity) entity;
         double distance = target.getLocation().distance(caster.getLocation());
         if (distance <= radius) {
-          // Damage falls off with distance
-          double damageMultiplier = 1.0 - (distance / radius);
-          target.damage(damage * damageMultiplier, caster);
+          double normalizedDistance = distance / radius;
+          double damageMultiplier = 1.0 - (normalizedDistance * normalizedDistance);
+          damageMultiplier = Math.max(damageMultiplier, 0.5);
+
+          SpellEngine.damage(caster, target, damage * damageMultiplier, SpellDamageType.NORMAL);
 
           // Knockback effect
           Vector knockback = target.getLocation().subtract(caster.getLocation()).toVector();

@@ -1,19 +1,20 @@
 package me.berrycraft.dynamicspells.Spells;
 
+import me.berrycraft.dynamicspells.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.BlockDisplay;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.util.Transformation;
 import org.bukkit.util.Vector;
-
-import me.berrycraft.dynamicspells.DynamicSpells;
-import me.berrycraft.dynamicspells.IExecutableSpell;
-import me.berrycraft.dynamicspells.Spell;
-import me.berrycraft.dynamicspells.SpellEngine;
+import org.joml.Vector3f;
 
 public class Laser extends Spell implements IExecutableSpell {
 
@@ -25,7 +26,6 @@ public class Laser extends Spell implements IExecutableSpell {
     private int level;
     private double damage;
     private double chargeTime;
-    private double lastDamageTime;
     private boolean fired;
 
     public static void init() {
@@ -37,8 +37,7 @@ public class Laser extends Spell implements IExecutableSpell {
         laser.caster = caster;
         laser.level = level;
         laser.damage = config.getDouble(level + ".damage", 5.0);
-        laser.chargeTime = 0.5; // seconds
-        laser.lastDamageTime = 0.0;
+        laser.chargeTime = config.getDouble(level + ".charge_time", 1.0);
         laser.fired = false;
 
         SpellEngine.register(laser, laser.chargeTime);
@@ -47,14 +46,12 @@ public class Laser extends Spell implements IExecutableSpell {
 
     @Override
     public void start() {
-        // Slow down caster
         caster.setWalkSpeed(0.05f);
-        caster.getWorld().playSound(caster.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1.0f, 0.8f);
+        caster.getWorld().playSound(caster.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 1.0f, 0.8f);
     }
 
     @Override
     public void update(double t) {
-        // Show charging particles
         caster.getWorld().spawnParticle(Particle.SMALL_FLAME, caster.getLocation().add(0, 1.5, 0), 5, 0.2, 0.2, 0.2, 0);
 
         if (!fired && t >= chargeTime) {
@@ -66,8 +63,8 @@ public class Laser extends Spell implements IExecutableSpell {
 
     @Override
     public void finish() {
-        caster.setWalkSpeed(0.2f); // reset speed
-        caster.getWorld().playSound(caster.getLocation(), Sound.ENTITY_BLAZE_DEATH, 0.5f, 1.0f);
+        caster.setWalkSpeed(0.2f);
+        caster.getWorld().playSound(caster.getLocation(), Sound.ENTITY_WARDEN_SONIC_BOOM, 0.5f, 1.0f);
         caster.getWorld().spawnParticle(Particle.SMOKE, caster.getLocation(), 20, 1, 1, 1, 0.1);
     }
 
@@ -77,19 +74,44 @@ public class Laser extends Spell implements IExecutableSpell {
 
         caster.getWorld().playSound(start, Sound.ENTITY_GHAST_SHOOT, 1.0f, 1.0f);
 
-        for (double distance = 0; distance < 1000; distance += 1.0) {
+        // Fire the laser beam
+        for (double distance = 0; distance < 100; distance += 1.0) {
             Location point = start.clone().add(direction.clone().multiply(distance));
-            caster.getWorld().spawnParticle(Particle.FLAME, point, 1, 0, 0, 0, 0, null);
 
-            for (Player target : Bukkit.getOnlinePlayers()) {
-                if (target.equals(caster))
-                    continue;
-                if (!target.getWorld().equals(point.getWorld()))
-                    continue;
-                if (target.getLocation().distance(point) < 1.0) {
-                    double newHealth = target.getHealth() - damage;
-                    target.setHealth(Math.max(0.0, newHealth));
-                }
+            // Spawn main laser block (quartz)
+            BlockData mainBeam = Material.QUARTZ_BLOCK.createBlockData();
+            BlockDisplay mainDisplay = point.getWorld().spawn(point, BlockDisplay.class, display -> {
+                display.setBlock(mainBeam);
+                display.setTransformation(new Transformation(
+                        new Vector3f(0, 0, 0),           // translation
+                        new org.joml.Quaternionf(),      // rotation
+                        new Vector3f(0.2f, 0.2f, 0.2f), // scale
+                        new org.joml.Quaternionf()       // left rotation
+                ));
+                display.setBillboard(BlockDisplay.Billboard.FIXED);
+            });
+
+            // Spawn overlay (white stained glass)
+            BlockData overlay = Material.WHITE_STAINED_GLASS.createBlockData();
+            BlockDisplay overlayDisplay = point.getWorld().spawn(point, BlockDisplay.class, display -> {
+                display.setBlock(overlay);
+                display.setTransformation(new Transformation(
+                        new Vector3f(0, 0, 0),
+                        new org.joml.Quaternionf(),
+                        new Vector3f(0.25f, 0.25f, 0.25f), // slightly larger for a glow effect
+                        new org.joml.Quaternionf()
+                ));
+                display.setBillboard(BlockDisplay.Billboard.FIXED);
+                display.setBrightness(new BlockDisplay.Brightness(15, 15));
+            });
+
+            // Damage entities in the beam
+            for (Entity entity : caster.getWorld().getNearbyEntities(point, 0.5, 0.5, 0.5)) {
+                if (entity.equals(caster)) continue;
+                if (!(entity instanceof LivingEntity)) continue;
+
+                LivingEntity target = (LivingEntity) entity;
+                SpellEngine.damage(caster, target, damage, SpellDamageType.MAGIC);
             }
         }
     }
