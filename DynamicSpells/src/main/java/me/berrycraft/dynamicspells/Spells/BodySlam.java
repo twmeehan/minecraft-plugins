@@ -14,10 +14,13 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
 import org.bukkit.Location;
+import org.bukkit.Particle.DustOptions;
+import org.bukkit.Color;
 
 import me.berrycraft.dynamicspells.DynamicSpells;
 import me.berrycraft.dynamicspells.IExecutableSpell;
 import me.berrycraft.dynamicspells.Spell;
+import me.berrycraft.dynamicspells.SpellDamageType;
 import me.berrycraft.dynamicspells.SpellEngine;
 
 public class BodySlam extends Spell implements IExecutableSpell, Listener {
@@ -29,6 +32,7 @@ public class BodySlam extends Spell implements IExecutableSpell, Listener {
   private Player caster;
   private int level;
   private double verticalBoost;
+  private double victimBoost;
   private double damage;
   private double radius;
   private boolean hasLanded;
@@ -43,6 +47,7 @@ public class BodySlam extends Spell implements IExecutableSpell, Listener {
     slam.caster = caster;
     slam.level = level;
     slam.verticalBoost = config.getDouble(level + ".vertical_boost", 2.0);
+    slam.victimBoost = config.getDouble(level + ".victim_boost", 1.0);
     slam.damage = config.getDouble(level + ".damage", 10.0);
     slam.radius = config.getDouble(level + ".radius", 5.0);
     slam.hasLanded = false;
@@ -64,7 +69,15 @@ public class BodySlam extends Spell implements IExecutableSpell, Listener {
 
     // Play sound and particles for the initial boost
     caster.getWorld().playSound(caster.getLocation(), Sound.ENTITY_IRON_GOLEM_ATTACK, 1.0f, 0.5f);
-    caster.getWorld().spawnParticle(Particle.CLOUD, caster.getLocation(), 20, 0.5, 0.5, 0.5, 0.1);
+
+    // Create iron block particles for the initial boost
+    for (int i = 0; i < 20; i++) {
+      caster.getWorld().spawnParticle(
+          Particle.BLOCK,
+          caster.getLocation().add(0, 1, 0),
+          1, 0.3, 0.3, 0.3, 0,
+          Material.IRON_BLOCK.createBlockData());
+    }
   }
 
   @Override
@@ -81,7 +94,6 @@ public class BodySlam extends Spell implements IExecutableSpell, Listener {
         if (caster.isOnGround()) {
           hasLanded = true;
           performLandingEffect();
-          // Remove the metadata when landing
           caster.removeMetadata("BODY_SLAM_ACTIVE", DynamicSpells.getInstance());
         }
       }
@@ -105,12 +117,20 @@ public class BodySlam extends Spell implements IExecutableSpell, Listener {
 
         // Main explosion particles
         caster.getWorld().spawnParticle(Particle.CLOUD, particleLoc, 1, 0, 0, 0, 0);
+        // Main explosion particles (iron blocks)
+        caster.getWorld().spawnParticle(
+            Particle.BLOCK,
+            particleLoc,
+            1, 0, 0, 0, 0,
+            Material.IRON_BLOCK.createBlockData());
 
-        // Add some upward particles for effect
+        // Add some anvil particles for effect
         if (r > radius * 0.7) { // Only on the outer ring
-          caster.getWorld().spawnParticle(Particle.SMOKE,
+          caster.getWorld().spawnParticle(
+              Particle.BLOCK,
               particleLoc.clone().add(0, 0.5, 0),
-              1, 0.1, 0.1, 0.1, 0.05);
+              1, 0.1, 0.1, 0.1, 0,
+              Material.ANVIL.createBlockData());
         }
       }
     }
@@ -121,14 +141,15 @@ public class BodySlam extends Spell implements IExecutableSpell, Listener {
         LivingEntity target = (LivingEntity) entity;
         double distance = target.getLocation().distance(caster.getLocation());
         if (distance <= radius) {
-          // Damage falls off with distance
-          double damageMultiplier = 1.0 - (distance / radius);
-          target.damage(damage * damageMultiplier, caster);
+          double normalizedDistance = distance / radius;
+          double damageMultiplier = 1.0 - (normalizedDistance * normalizedDistance);
+          damageMultiplier = Math.max(damageMultiplier, 0.5);
+
+          SpellEngine.damage(caster, target, damage * damageMultiplier, SpellDamageType.NORMAL);
 
           // Knockback effect
           Vector knockback = target.getLocation().subtract(caster.getLocation()).toVector();
-          knockback.setY(verticalBoost); // Strong upward force
-          knockback.normalize().multiply(0.8); // Normalize and scale
+          knockback.setY(victimBoost); // Strong upward force
           target.setVelocity(knockback);
         }
       }

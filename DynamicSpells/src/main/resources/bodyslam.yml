@@ -8,6 +8,7 @@ lore:
 1:
   damage: 6.0
   vertical_boost: 1.0
+  victim_boost: 1.25
   radius: 2.0
   cooldown: 15
   min_uses: 7
@@ -17,6 +18,7 @@ lore:
 2:
   damage: 8.0
   vertical_boost: 1.25
+  victim_boost: 1.5
   radius: 2.5
   cooldown: 15
   min_uses: 10
@@ -26,6 +28,7 @@ lore:
 3:
   damage: 10.0
   vertical_boost: 1.5
+  victim_boost: 1.75
   radius: 3.0
   cooldown: 15
   min_uses: 20
@@ -34,7 +37,8 @@ lore:
 
 4:
   damage: 14.0
-  vertical_boost: 1.75
+  vertical_boost: 2.0
+  victim_boost: 2.0
   radius: 4.0
   cooldown: 15
   min_uses: 25
@@ -43,7 +47,8 @@ lore:
 
 5:
   damage: 20.0
-  vertical_boost: 2.0
+  vertical_boost: 3.0
+  victim_boost: 3.0
   radius: 6.0
   cooldown: 15
   min_uses: 30

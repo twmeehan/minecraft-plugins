@@ -63,31 +63,46 @@ public class SpellEngine {
         }
     }
 
-    public static void damage(Entity damager, Entity victim, double damage) {
-    if (victim instanceof LivingEntity) {
-        LivingEntity target = (LivingEntity) victim;
-        double currentHealth = target.getHealth();
-        
-        AttributeInstance attr = target.getAttribute(Attribute.GENERIC_ARMOR);
-        double armor = attr != null ? attr.getValue() : 0;
+    public static void damage(Entity damager, Entity victim, double damage, SpellDamageType damageType) {
+        if (victim instanceof LivingEntity) {
+            LivingEntity target = (LivingEntity) victim;
+            double currentHealth = target.getHealth();
+            double finalDamage = damage;
 
-        // Calculate reduction
-        double reduction = 1.0 - Math.min(20.0, armor) / 25.0;
-        double finalDamage = damage * reduction;
-        double newHealth = currentHealth - finalDamage;
+            switch (damageType) {
+                case NORMAL:
+                    // Vanilla damage system (armor + enchantments apply)
+                    target.damage(damage, damager);
+                    return;
 
-        if (newHealth <= 0) {
-            target.setHealth(0);
-            target.setLastDamageCause(new EntityDamageByEntityEvent(
-                damager, victim, EntityDamageEvent.DamageCause.CUSTOM, damage
-            ));
-        } else {
-            target.setHealth(newHealth);
-            target.setLastDamageCause(new EntityDamageByEntityEvent(
-                damager, victim, EntityDamageEvent.DamageCause.CUSTOM, damage
-            ));
+                case MAGIC:
+                    // Armor applies, but NOT enchantments (manual reduction)
+                    AttributeInstance armorAttr = target.getAttribute(Attribute.GENERIC_ARMOR);
+                    double armor = armorAttr != null ? armorAttr.getValue() : 0;
+                    double reduction = 1.0 - Math.min(20.0, armor) / 25.0;
+                    finalDamage = damage * reduction;
+                    break;
+
+                case TRUE:
+                    // Ignore all armor and enchants – raw damage
+                    break;
+            }
+
+            double newHealth = currentHealth - finalDamage;
+
+            if (newHealth <= 0) {
+                // Kill cleanly with damager context
+                target.damage(100000, damager);
+            } else {
+                // Bypass Bukkit damage modifiers and enchantments
+                target.damage(0.01); // triggers animation/sound
+                target.setHealth(newHealth);
+                target.setLastDamageCause(new EntityDamageByEntityEvent(
+                    damager, victim, EntityDamageEvent.DamageCause.CUSTOM, finalDamage
+                ));
+            }
         }
     }
-}
+
 
 }
