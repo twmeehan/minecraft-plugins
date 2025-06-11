@@ -56,7 +56,7 @@ public class SpellBookHandler implements Listener {
         ItemStack item = player.getInventory().getItemInMainHand();
 
         if (item == null) return;
-
+        if (item.getType()==Material.AIR) return;
         NBTItem nbti = new NBTItem(item);
         if (!"spell_book".equals(nbti.getString("CustomItem"))) return;
 
@@ -72,8 +72,8 @@ public class SpellBookHandler implements Listener {
             return;
         }
 
-        if (cooldowns.get(player).containsKey(spellName) && (System.currentTimeMillis() - cooldowns.get(player).get(spellName))/1000.0 < cooldown) {
-            player.sendMessage(ChatColor.RED + "Please wait " + (cooldown - (System.currentTimeMillis() - cooldowns.get(player).get(spellName))/1000) + "s before casting again.");
+        if (cooldowns.get(player).containsKey(spellName) && (System.currentTimeMillis() < cooldowns.get(player).get(spellName))) {
+            player.sendMessage(ChatColor.RED + "Please wait " + (-(System.currentTimeMillis() - cooldowns.get(player).get(spellName))/1000) + "s before casting again.");
             return;
 
         }
@@ -104,7 +104,7 @@ public class SpellBookHandler implements Listener {
                 });
 
                 player.setCooldown(item.getType(), cooldown*20);
-                cooldowns.get(player).put(spellName,System.currentTimeMillis());
+                cooldowns.get(player).put(spellName,System.currentTimeMillis()+cooldown*1000L);
 
             }
 
