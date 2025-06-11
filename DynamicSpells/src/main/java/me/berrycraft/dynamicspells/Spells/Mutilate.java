@@ -20,6 +20,8 @@ public class Mutilate extends Spell implements IExecutableSpell {
     private double damage;
     private double maxRange;
     private int swipes;
+    private double initialDashMultiplier;
+    private double subsequentDashMultiplier;
     private boolean fired;
 
     private LivingEntity target;
@@ -36,6 +38,8 @@ public class Mutilate extends Spell implements IExecutableSpell {
         mutilate.damage = config.getDouble(level + ".damage", 5.0);
         mutilate.maxRange = config.getDouble(level + ".max_range", 15.0);
         mutilate.swipes = config.getInt(level + ".swipes", 3);
+        mutilate.initialDashMultiplier = config.getDouble(level + ".initial_dash_speed", 3.5);
+        mutilate.subsequentDashMultiplier = config.getDouble(level + ".subsequent_dash_speed", 0.75);
         mutilate.fired = false;
 
         SpellEngine.register(mutilate, mutilate.chargeTime);
@@ -93,7 +97,7 @@ public class Mutilate extends Spell implements IExecutableSpell {
                         swipeCount[0]++;
                     }
                 },
-                0L, 4L // 8 ticks = 0.4 seconds between dashes
+                0L, 8L // 8 ticks = 0.4 seconds between dashes
         );
     }
 
@@ -121,22 +125,21 @@ public class Mutilate extends Spell implements IExecutableSpell {
         double speed;
         if (swipeIndex == 0) {
             // First dash: reach the target even at maxRange
-            speed = Math.min(distance * 3.5, 6.0); // first dash = big leap!
+            speed = Math.min(distance * initialDashMultiplier, 6.0);
         } else {
             // Subsequent dashes: quick reposition without overshooting
-            speed = Math.min(distance * .2, 2.0); // reduced dash speed
+            speed = Math.min(distance * subsequentDashMultiplier, 2.0);
         }
 
         // Make the player face the target
         Vector direction = end.toVector().subtract(start.toVector()).normalize();
         Location lookLocation = start.clone().setDirection(direction);
-
-        // Update both the server-side and client-side rotation
         caster.teleport(lookLocation);
         caster.setRotation(lookLocation.getYaw(), lookLocation.getPitch());
+
         // Launch the player
         Vector velocity = direction.multiply(speed);
-        velocity.setY(0.1); // Slight upward lift
+        velocity.setY(0.3); // Slight upward lift
         caster.setVelocity(velocity);
 
         drawTrail(start, end);
