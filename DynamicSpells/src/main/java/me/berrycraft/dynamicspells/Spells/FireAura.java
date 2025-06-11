@@ -80,7 +80,7 @@ public class FireAura extends Spell implements IExecutableSpell {
       for (Entity entity : caster.getWorld().getNearbyEntities(caster.getLocation(), radius, radius, radius)) {
         if (entity instanceof LivingEntity && entity != caster) {
           LivingEntity target = (LivingEntity) entity;
-          target.damage(damage * 2, caster);
+          SpellEngine.damage(caster,target,damage * 2);
           // target.setFireTicks(20); // Set on fire for 1 second
         }
       }
