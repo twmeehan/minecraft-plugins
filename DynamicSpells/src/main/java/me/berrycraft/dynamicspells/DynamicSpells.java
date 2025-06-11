@@ -42,6 +42,7 @@ public final class DynamicSpells extends JavaPlugin {
         }
 
         getServer().getPluginManager().registerEvents(new SpellBookHandler(this), this);
+        getServer().getPluginManager().registerEvents(new FireAuraListener(), this);
 
         populateStringToClassMap();
         initSpells();
