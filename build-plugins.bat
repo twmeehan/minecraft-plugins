@@ -60,7 +60,7 @@ REM Copy JAR file to main target directory (excluding original-*.jar)
 for %%f in (target\*.jar) do (
     set jarName=%%~nxf
     echo Checking file: !jarName!
-    echo !jarName! | findstr /i /r "^original-.*\.jar$" >nul
+    echo !jarName! | findstr /i /r "^*\.jar$" >nul
     if errorlevel 1 (
         copy "%%f" "..\target\" >nul
     )
