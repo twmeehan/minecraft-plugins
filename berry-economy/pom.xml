@@ -101,5 +101,12 @@
             <artifactId>mysql-connector-j</artifactId>
             <version>8.0.33</version>
         </dependency>
+        <dependency>
+            <groupId>me.berrycraft</groupId>
+            <artifactId>dynamicspells</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/../DynamicSpells/target/dynamicspells-1.0.jar</systemPath>
+        </dependency>
     </dependencies>
 </project>

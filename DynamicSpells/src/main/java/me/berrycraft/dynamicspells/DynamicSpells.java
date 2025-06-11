@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import me.berrycraft.dynamicspells.Commands.CastCommand;
@@ -62,6 +63,11 @@ public final class DynamicSpells extends JavaPlugin {
 
     public static DynamicSpells getInstance() {
         return instance;
+    }
+
+    public static ItemStack getSpellBook(String spellName, int level) {
+        if (!getInstance().stringToClass.containsKey(spellName)) return null;
+        return SpellBookHandler.getSpellBook(getInstance().stringToClass.get(spellName), level);
     }
 
     public static void cast(String spellName) {

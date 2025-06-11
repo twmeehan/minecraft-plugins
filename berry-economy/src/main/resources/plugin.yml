@@ -2,7 +2,7 @@ name: berry-economy
 version: '${project.version}'
 main: me.berrycraft.berryeconomy.Berry
 api-version: '1.21.5'
-depend: [NBTAPI]
+depend: [NBTAPI, DynamicSpells]
 commands:
   exchange:
     usage: /exchange
