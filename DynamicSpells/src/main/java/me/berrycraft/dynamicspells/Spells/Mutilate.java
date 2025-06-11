@@ -124,7 +124,7 @@ public class Mutilate extends Spell implements IExecutableSpell {
             speed = Math.min(distance * 3.5, 6.0); // first dash = big leap!
         } else {
             // Subsequent dashes: quick reposition without overshooting
-            speed = Math.min(distance * .05, 2.0); // reduced dash speed
+            speed = Math.min(distance * .2, 2.0); // reduced dash speed
         }
 
         // Make the player face the target
