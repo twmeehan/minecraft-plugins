@@ -1,0 +1,45 @@
+name: Berserk
+color: §4
+lore:
+  - "Gain both swiftness and strength"
+  - "Loses health over time"
+
+1:
+  potion_levels: 1.0
+  cooldown: 10
+  min_uses: 7
+  max_uses: 10
+  drain_per_second: 1.0
+  rarity: "COMMON"
+
+2:
+  potion_levels: 1.0
+  cooldown: 10
+  min_uses: 10
+  max_uses: 20
+  drain_per_second: 0.5
+  rarity: "UNCOMMON"
+
+3:
+  potion_levels: 2.0
+  cooldown: 10
+  min_uses: 20
+  max_uses: 30
+  drain_per_second: 1.0
+  rarity: "RARE"
+
+4:
+  potion_levels: 3.0
+  cooldown: 10
+  min_uses: 25
+  max_uses: 40
+  drain_health: 0.5
+  rarity: "LEGENDARY"
+
+5:
+  potion_levels: 4.0
+  cooldown: 10
+  min_uses: 30
+  max_uses: 50
+  drain_health: 0.5
+  rarity: "MYTHIC"
