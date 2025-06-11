@@ -1,9 +1,14 @@
 package me.berrycraft.berryeconomy.custom_loot;
 
 import me.berrycraft.berryeconomy.Berry;
+import me.berrycraft.dynamicspells.DynamicSpells;
+
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import de.tr7zw.nbtapi.NBTItem;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,6 +57,13 @@ public class CustomLootTable {
             CustomLootTableEntry entry = entries.get(i);
             ItemStack item = entry.getItem();
             ItemMeta meta = item.getItemMeta();
+            NBTItem nbti = new NBTItem(item);
+
+            if (nbti.getString("CustomItem").equals("spell_book")) {
+                String spell = nbti.getString("Spell");
+                int level = nbti.getInteger("Level");
+                item = DynamicSpells.getSpellBook(spell,level);
+            }
             if (meta != null && meta.hasDisplayName() && meta.getDisplayName().endsWith(".yml")) {
                 String linkedTable = meta.getDisplayName().replace(".yml", "");
                 if (linkedTable.charAt(0)=='*') {
@@ -98,6 +110,13 @@ public class CustomLootTable {
         for (int i = 0; i < entry.getRolls(); i++) {
             ItemStack item = entry.getItem().clone();
             ItemMeta meta = item.getItemMeta();
+            NBTItem nbti = new NBTItem(item);
+            if (nbti.getString("CustomItem").equals("spell_book")) {
+
+                String spell = nbti.getString("Spell");
+                int level = nbti.getInteger("Level");
+                item = DynamicSpells.getSpellBook(spell,level);
+            }
             if (meta != null && meta.hasDisplayName() && meta.getDisplayName().endsWith(".yml")) {
                 String linkedTable = meta.getDisplayName().replace(".yml", "");
                 if (linkedTable.charAt(0)=='*') {

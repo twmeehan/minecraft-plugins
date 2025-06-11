@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import me.berrycraft.dynamicspells.Commands.CastCommand;
@@ -16,6 +17,9 @@ import me.berrycraft.dynamicspells.Spells.Heal;
 import me.berrycraft.dynamicspells.Spells.Laser;
 import me.berrycraft.dynamicspells.Spells.Dash;
 import me.berrycraft.dynamicspells.Spells.BodySlam;
+import me.berrycraft.dynamicspells.Spells.Mutilate;
+
+import me.berrycraft.dynamicspells.Spells.Recall;
 
 public final class DynamicSpells extends JavaPlugin {
 
@@ -32,6 +36,8 @@ public final class DynamicSpells extends JavaPlugin {
         SPELLS.add(Laser.class);
         SPELLS.add(Dash.class);
         SPELLS.add(BodySlam.class);
+        SPELLS.add(Mutilate.class);
+        SPELLS.add(Recall.class);
 
         instance = this;
 
@@ -62,6 +68,11 @@ public final class DynamicSpells extends JavaPlugin {
 
     public static DynamicSpells getInstance() {
         return instance;
+    }
+
+    public static ItemStack getSpellBook(String spellName, int level) {
+        if (!getInstance().stringToClass.containsKey(spellName)) return null;
+        return SpellBookHandler.getSpellBook(getInstance().stringToClass.get(spellName), level);
     }
 
     public static void cast(String spellName) {
