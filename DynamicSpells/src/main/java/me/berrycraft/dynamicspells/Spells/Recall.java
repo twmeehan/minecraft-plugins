@@ -145,7 +145,7 @@ public class Recall extends Spell implements IExecutableSpell {
     caster.removeMetadata("RECALL_CHANNELING", DynamicSpells.getInstance());
 
     // Play failure sound and particles
-    caster.getWorld().playSound(caster.getLocation(), Sound.ENTITY_ENRMAN_TELEPORT, 1.0f, 0.5f);
+    caster.getWorld().playSound(caster.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0f, 0.5f);
     caster.getWorld().playSound(caster.getLocation(), Sound.BLOCK_BEACON_DEACTIVATE, 1.0f, 1.0f);
     caster.getWorld().spawnParticle(Particle.SMOKE, caster.getLocation(), 30, 0.5, 0.5, 0.5, 0.1);
     caster.getWorld().spawnParticle(Particle.END_ROD, caster.getLocation(), 15, 0.5, 0.5, 0.5, 0.1);
