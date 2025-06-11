@@ -3,11 +3,20 @@ package me.berrycraft.dynamicspells;
 import java.util.HashMap;
 import java.util.UUID;
 
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import me.berrycraft.dynamicspells.Spells.FireAura;
 
 public class SpellEngine {
 
     public static HashMap<UUID, IExecutableSpell> activeSpells = new HashMap<UUID, IExecutableSpell>();
+    public static HashMap<UUID, FireAura> activeFireAuraCasters = new HashMap<>();
 
     public static void register(Spell spell, double duration) {
 
@@ -15,6 +24,11 @@ public class SpellEngine {
             return;
         IExecutableSpell executableSpell = (IExecutableSpell) spell;
         executableSpell.start();
+
+        if (spell instanceof FireAura) {
+            activeFireAuraCasters.put(((FireAura) spell).caster.getUniqueId(), (FireAura) spell);
+        }
+
         if (duration > 0) {
 
             activeSpells.put(spell.id, executableSpell);
@@ -29,6 +43,9 @@ public class SpellEngine {
                     executableSpell.update(time);
                     if (time > duration) {
                         activeSpells.remove(spell.id);
+                        if (spell instanceof FireAura) {
+                            activeFireAuraCasters.remove(((FireAura) spell).caster.getUniqueId());
+                        }
                         executableSpell.finish();
                         this.cancel();
                     }
@@ -41,5 +58,36 @@ public class SpellEngine {
         if (!(spell instanceof IExecutableSpell))
             return;
         activeSpells.remove(spell.id);
+        if (spell instanceof FireAura) {
+            activeFireAuraCasters.remove(((FireAura) spell).caster.getUniqueId());
+        }
     }
+
+    public static void damage(Entity damager, Entity victim, double damage) {
+    if (victim instanceof LivingEntity) {
+        LivingEntity target = (LivingEntity) victim;
+        double currentHealth = target.getHealth();
+        
+        AttributeInstance attr = target.getAttribute(Attribute.GENERIC_ARMOR);
+        double armor = attr != null ? attr.getValue() : 0;
+
+        // Calculate reduction
+        double reduction = 1.0 - Math.min(20.0, armor) / 25.0;
+        double finalDamage = damage * reduction;
+        double newHealth = currentHealth - finalDamage;
+
+        if (newHealth <= 0) {
+            target.setHealth(0);
+            target.setLastDamageCause(new EntityDamageByEntityEvent(
+                damager, victim, EntityDamageEvent.DamageCause.CUSTOM, damage
+            ));
+        } else {
+            target.setHealth(newHealth);
+            target.setLastDamageCause(new EntityDamageByEntityEvent(
+                damager, victim, EntityDamageEvent.DamageCause.CUSTOM, damage
+            ));
+        }
+    }
+}
+
 }
