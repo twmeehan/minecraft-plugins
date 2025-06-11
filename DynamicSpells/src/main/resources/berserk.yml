@@ -1,45 +1,40 @@
 name: Berserk
 color: §4
 lore:
-  - "Gain both swiftness and strength"
-  - "Loses health over time"
+  - "Gain both swiftness and strength {potion_level}"
+  - "for 10s. Lose 0.5 hearts every second."
 
 1:
-  potion_levels: 1.0
-  cooldown: 10
+  potion_level: "I"
+  cooldown: 60
   min_uses: 7
   max_uses: 10
-  drain_per_second: 1.0
   rarity: "COMMON"
 
 2:
-  potion_levels: 1.0
-  cooldown: 10
-  min_uses: 10
+  potion_level: "II"
+  cooldown: 50
+  min_uses: 12
   max_uses: 20
-  drain_per_second: 0.5
   rarity: "UNCOMMON"
 
 3:
-  potion_levels: 2.0
-  cooldown: 10
+  potion_level: "III"
+  cooldown: 40
   min_uses: 20
   max_uses: 30
-  drain_per_second: 1.0
   rarity: "RARE"
 
 4:
-  potion_levels: 3.0
-  cooldown: 10
-  min_uses: 25
-  max_uses: 40
-  drain_health: 0.5
+  potion_level: "IV"
+  cooldown: 30
+  min_uses: 30
+  max_uses: 50
   rarity: "LEGENDARY"
 
 5:
-  potion_levels: 4.0
-  cooldown: 10
-  min_uses: 30
-  max_uses: 50
-  drain_health: 0.5
+  potion_level: "V"
+  cooldown: 20
+  min_uses: 60
+  max_uses: 80
   rarity: "MYTHIC"

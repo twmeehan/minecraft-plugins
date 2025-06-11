@@ -16,6 +16,7 @@ import me.berrycraft.dynamicspells.Spells.FireAura;
 import me.berrycraft.dynamicspells.Spells.Heal;
 import me.berrycraft.dynamicspells.Spells.Laser;
 import me.berrycraft.dynamicspells.Spells.Dash;
+import me.berrycraft.dynamicspells.Spells.Berserk;
 import me.berrycraft.dynamicspells.Spells.BodySlam;
 import me.berrycraft.dynamicspells.Spells.Mutilate;
 
@@ -38,6 +39,7 @@ public final class DynamicSpells extends JavaPlugin {
         SPELLS.add(BodySlam.class);
         SPELLS.add(Mutilate.class);
         SPELLS.add(Recall.class);
+        SPELLS.add(Berserk.class);
 
         instance = this;
 
@@ -71,7 +73,8 @@ public final class DynamicSpells extends JavaPlugin {
     }
 
     public static ItemStack getSpellBook(String spellName, int level) {
-        if (!getInstance().stringToClass.containsKey(spellName)) return null;
+        if (!getInstance().stringToClass.containsKey(spellName))
+            return null;
         return SpellBookHandler.getSpellBook(getInstance().stringToClass.get(spellName), level);
     }
 
