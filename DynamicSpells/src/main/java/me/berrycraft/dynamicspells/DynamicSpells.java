@@ -11,6 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import me.berrycraft.dynamicspells.Commands.CastCommand;
 import me.berrycraft.dynamicspells.Commands.SpellBookCommand;
+import me.berrycraft.dynamicspells.Spells.FireAura;
 import me.berrycraft.dynamicspells.Spells.Heal;
 
 public final class DynamicSpells extends JavaPlugin {
@@ -19,10 +20,12 @@ public final class DynamicSpells extends JavaPlugin {
     public HashMap<String, Class<? extends Spell>> stringToClass = new HashMap<String, Class<? extends Spell>>();
 
     private static DynamicSpells instance;
+
     @Override
     public void onEnable() {
 
         SPELLS.add(Heal.class);
+        SPELLS.add(FireAura.class);
 
         instance = this;
 
@@ -35,11 +38,11 @@ public final class DynamicSpells extends JavaPlugin {
         getCommand("spellbook").setTabCompleter(spellbookCommand);
 
         for (Player p : Bukkit.getOnlinePlayers()) {
-            SpellBookHandler.cooldowns.put(p,new HashMap<String,Long>());
+            SpellBookHandler.cooldowns.put(p, new HashMap<String, Long>());
         }
-        
+
         getServer().getPluginManager().registerEvents(new SpellBookHandler(this), this);
-        
+
         populateStringToClassMap();
         initSpells();
     }
@@ -65,24 +68,24 @@ public final class DynamicSpells extends JavaPlugin {
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 e.printStackTrace();
             }
-            
+
         }
     }
 
     public void initSpells() {
         for (Class<? extends Spell> spellClass : SPELLS) {
-        try {
-            // Look for a static method named "init" with no parameters
-            java.lang.reflect.Method initMethod = spellClass.getMethod("init");
+            try {
+                // Look for a static method named "init" with no parameters
+                java.lang.reflect.Method initMethod = spellClass.getMethod("init");
 
-            // Call the static method (pass null for static)
-            initMethod.invoke(null);
-        } catch (NoSuchMethodException e) {
-            getLogger().warning("No init() method found in " + spellClass.getSimpleName());
-        } catch (Exception e) {
-            getLogger().severe("Failed to initialize spell: " + spellClass.getSimpleName());
-            e.printStackTrace();
+                // Call the static method (pass null for static)
+                initMethod.invoke(null);
+            } catch (NoSuchMethodException e) {
+                getLogger().warning("No init() method found in " + spellClass.getSimpleName());
+            } catch (Exception e) {
+                getLogger().severe("Failed to initialize spell: " + spellClass.getSimpleName());
+                e.printStackTrace();
+            }
         }
-    }
     }
 }

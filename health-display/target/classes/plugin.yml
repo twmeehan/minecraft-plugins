@@ -1,4 +1,0 @@
-name: health-display
-version: '2.0.1'
-main: me.berrycraft.healthdisplay.HealthDisplay
-api-version: '1.19'

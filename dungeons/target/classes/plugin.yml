@@ -1,8 +1,0 @@
-name: dungeons
-version: '1.0-SNAPSHOT'
-main: me.berrycraft.dungeons.Dungeons
-api-version: '1.20'
-commands:
-  dungeon:
-    usage: /dungeon
-    description: warps you to a dungeon maybe idk will be changed eventually
