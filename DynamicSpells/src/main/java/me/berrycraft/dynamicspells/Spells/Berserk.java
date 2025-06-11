@@ -1,5 +1,6 @@
 package me.berrycraft.dynamicspells.Spells;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -16,6 +17,7 @@ import me.berrycraft.dynamicspells.IExecutableSpell;
 import me.berrycraft.dynamicspells.Spell;
 import me.berrycraft.dynamicspells.SpellEngine;
 import me.berrycraft.dynamicspells.SpellDamageType;
+import me.berrycraft.dynamicspells.DynamicSpells;
 
 public class Berserk extends Spell implements IExecutableSpell, Listener {
     public static final String NAME = "berserk";
@@ -30,13 +32,14 @@ public class Berserk extends Spell implements IExecutableSpell, Listener {
 
     public static void init() {
         config = loadSpellConfig(NAME);
+        Bukkit.getPluginManager().registerEvents(new Berserk(), DynamicSpells.getInstance());
     }
 
     public static boolean cast(Player caster, int level) {
         Berserk berserk = new Berserk();
         berserk.caster = caster;
         berserk.level = level;
-        berserk.durationSeconds = 10;
+        berserk.durationSeconds = config.getInt(level + ".duration", 6);
         berserk.healthDrain = 0.5;
 
         SpellEngine.register(berserk, berserk.durationSeconds);
@@ -91,14 +94,10 @@ public class Berserk extends Spell implements IExecutableSpell, Listener {
         // Check if the player has an active Berserk spell
         for (IExecutableSpell spell : SpellEngine.activeSpells.values()) {
             if (spell instanceof Berserk && ((Berserk) spell).caster.equals(player)) {
-                // Check if the damage is from the Berserk spell
-                if (event.getCause() == DamageCause.CUSTOM &&
-                        event.getDamage() == healthDrain * 2) {
-                    // Prevent death from Berserk damage
-                    if (player.getHealth() - event.getDamage() <= 0) {
-                        event.setCancelled(true);
-                        player.setHealth(1.0);
-                    }
+                // If the player would die from this damage, set their health to 1 instead
+                if (player.getHealth() - event.getDamage() <= 0) {
+                    event.setCancelled(true);
+                    player.setHealth(1.0);
                 }
                 break;
             }
