@@ -1,6 +1,7 @@
 package me.berrycraft.keepinventoryalternative;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameRule;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -114,6 +115,7 @@ public class KeepInventoryAlternative extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
+        event.getEntity().getWorld().setGameRule(GameRule.KEEP_INVENTORY,true);
         event.setKeepInventory(true);
         event.setKeepLevel(true);
         Player player = event.getEntity();
