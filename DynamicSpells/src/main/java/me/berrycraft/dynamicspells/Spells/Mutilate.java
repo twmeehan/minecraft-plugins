@@ -129,7 +129,11 @@ public class Mutilate extends Spell implements IExecutableSpell {
 
         // Make the player face the target
         Vector direction = end.toVector().subtract(start.toVector()).normalize();
-        caster.teleport(start.setDirection(direction));
+        Location lookLocation = start.clone().setDirection(direction);
+
+        // Update both the server-side and client-side rotation
+        caster.teleport(lookLocation);
+        caster.setRotation(lookLocation.getYaw(), lookLocation.getPitch());
 
         // Launch the player
         Vector velocity = direction.multiply(speed);
