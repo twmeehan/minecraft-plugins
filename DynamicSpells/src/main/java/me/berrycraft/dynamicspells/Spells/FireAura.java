@@ -1,5 +1,6 @@
 package me.berrycraft.dynamicspells.Spells;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -25,6 +26,7 @@ public class FireAura extends Spell implements IExecutableSpell {
   private double radius;
   private double duration;
   private double lastDamageTime;
+  private Location loc;
   private int level;
 
   public static void init() {
@@ -47,6 +49,8 @@ public class FireAura extends Spell implements IExecutableSpell {
 
   @Override
   public void start() {
+
+    this.loc = caster.getLocation();
     // Play sound and particle effects when the spell starts
     caster.getWorld().playSound(caster.getLocation(), Sound.ENTITY_BLAZE_BURN, 1.0f, 1.0f);
     caster.getWorld().spawnParticle(Particle.FLAME, caster.getLocation(), 50, 1, 1, 1, 0.1);
@@ -60,7 +64,7 @@ public class FireAura extends Spell implements IExecutableSpell {
       double z = Math.sin(angle) * radius;
       caster.getWorld().spawnParticle(
           Particle.FLAME,
-          caster.getLocation().add(x, 0.1, z),
+          this.loc.add(x, 0.1, z),
           1, 0, 0, 0, 0);
     }
 
@@ -80,7 +84,7 @@ public class FireAura extends Spell implements IExecutableSpell {
   @Override
   public void finish() {
     // Play sound and particle effects when the spell ends
-    caster.getWorld().playSound(caster.getLocation(), Sound.ENTITY_BLAZE_DEATH, 0.5f, 1.0f);
-    caster.getWorld().spawnParticle(Particle.SMOKE, caster.getLocation(), 20, 1, 1, 1, 0.1);
+    caster.getWorld().playSound(this.loc, Sound.ENTITY_BLAZE_DEATH, 0.5f, 1.0f);
+    caster.getWorld().spawnParticle(Particle.SMOKE, this.loc, 20, 1, 1, 1, 0.1);
   }
 }
