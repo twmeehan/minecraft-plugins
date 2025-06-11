@@ -127,7 +127,16 @@ public class Mutilate extends Spell implements IExecutableSpell {
             speed = Math.min(distance * 0.75, 2.0); // reduced dash speed
         }
 
-        Vector velocity = end.toVector().subtract(start.toVector()).normalize().multiply(speed);
+        // Make the player face the target
+        Vector direction = end.toVector().subtract(start.toVector()).normalize();
+        Location lookLocation = start.clone().setDirection(direction);
+
+        // Update both the server-side and client-side rotation
+        caster.teleport(lookLocation);
+        caster.setRotation(lookLocation.getYaw(), lookLocation.getPitch());
+
+        // Launch the player
+        Vector velocity = direction.multiply(speed);
         velocity.setY(0.3); // Slight upward lift
         caster.setVelocity(velocity);
 
