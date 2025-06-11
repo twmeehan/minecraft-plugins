@@ -24,6 +24,7 @@ public class FireAura extends Spell implements IExecutableSpell {
   private double damage;
   private double radius;
   private double duration;
+  private double lastDamageTime;
   private int level;
 
   public static void init() {
@@ -37,6 +38,7 @@ public class FireAura extends Spell implements IExecutableSpell {
     aura.damage = config.getDouble(level + ".damage");
     aura.radius = config.getDouble(level + ".radius");
     aura.duration = config.getDouble(level + ".duration");
+    aura.lastDamageTime = 0;
 
     // Register the spell with the engine
     SpellEngine.register(aura, aura.duration);
@@ -62,13 +64,14 @@ public class FireAura extends Spell implements IExecutableSpell {
           1, 0, 0, 0, 0);
     }
 
-    // Damage entities every 10 ticks (0.5 seconds)
-    if (t % 0.5 == 0) {
+    // Damage entities every 0.5 seconds
+    if (t - lastDamageTime >= 0.5) {
+      lastDamageTime = t;
       for (Entity entity : caster.getWorld().getNearbyEntities(caster.getLocation(), radius, radius, radius)) {
         if (entity instanceof LivingEntity && entity != caster) {
           LivingEntity target = (LivingEntity) entity;
-          target.damage(damage, caster);
-          target.setFireTicks(20); // Set on fire for 1 second
+          target.damage(damage * 2, caster);
+          // target.setFireTicks(20); // Set on fire for 1 second
         }
       }
     }
