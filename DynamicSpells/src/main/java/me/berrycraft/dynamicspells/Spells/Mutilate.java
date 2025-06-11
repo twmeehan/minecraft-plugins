@@ -2,13 +2,10 @@ package me.berrycraft.dynamicspells.Spells;
 
 import me.berrycraft.dynamicspells.*;
 import org.bukkit.*;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 public class Mutilate extends Spell implements IExecutableSpell {
@@ -79,20 +76,25 @@ public class Mutilate extends Spell implements IExecutableSpell {
 
         caster.getWorld().playSound(caster.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 1.0f, 1.0f);
 
-        final int[] swipeCount = {0};
-        new org.bukkit.scheduler.BukkitRunnable() {
-            @Override
-            public void run() {
-                if (swipeCount[0] >= swipes || target.isDead() || !target.isValid()) {
-                    this.cancel();
-                    return;
-                }
+        final int[] swipeCount = { 0 };
+        final int[] taskId = new int[1];
+        taskId[0] = Bukkit.getScheduler().scheduleSyncRepeatingTask(
+                DynamicSpells.getInstance(),
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        if (swipeCount[0] >= swipes || target.isDead() || !target.isValid()) {
+                            Bukkit.getScheduler().cancelTask(taskId[0]);
+                            return;
+                        }
 
-                launchToTarget();
-                performSwipe();
-                swipeCount[0]++;
-            }
-        }.runTaskTimer(DynamicSpells.getInstance(), 0L, 20L); // 20 ticks = 1 second between swipes
+                        launchToTarget(swipeCount[0]);
+                        performSwipe();
+                        swipeCount[0]++;
+                    }
+                },
+                0L, 8L // 8 ticks = 0.4 seconds between dashes
+        );
     }
 
     private LivingEntity getTargetEntity() {
@@ -111,14 +113,22 @@ public class Mutilate extends Spell implements IExecutableSpell {
         return null;
     }
 
-    private void launchToTarget() {
+    private void launchToTarget(int swipeIndex) {
         Location start = caster.getLocation();
         Location end = target.getLocation();
         double distance = start.distance(end);
-        double speed = Math.min(distance * 1.2, 2.0); // Cap speed to avoid overshooting
+
+        double speed;
+        if (swipeIndex == 0) {
+            // First dash: reach the target even at maxRange
+            speed = Math.min(distance * 3.5, 6.0); // first dash = big leap!
+        } else {
+            // Subsequent dashes: quick reposition without overshooting
+            speed = Math.min(distance * 0.75, 2.0); // reduced dash speed
+        }
 
         Vector velocity = end.toVector().subtract(start.toVector()).normalize().multiply(speed);
-        velocity.setY(0.4); // Slight upward lift
+        velocity.setY(0.3); // Slight upward lift
         caster.setVelocity(velocity);
 
         drawTrail(start, end);
@@ -144,17 +154,7 @@ public class Mutilate extends Spell implements IExecutableSpell {
             loc.getWorld().spawnParticle(Particle.SWEEP_ATTACK, particleLoc, 1, 0, 0, 0, 0);
         }
 
-        // Calculate damage with weapon multiplier
-        ItemStack weapon = caster.getInventory().getItemInMainHand();
-        double weaponDamage = 1.0;
-        if (weapon != null && weapon.getType() != Material.AIR) {
-            AttributeInstance attackDamage = caster.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE);
-            if (attackDamage != null) {
-                weaponDamage += attackDamage.getBaseValue();
-            }
-        }
-
-        double finalDamage = damage * weaponDamage;
-        SpellEngine.damage(caster, target, finalDamage, SpellDamageType.MAGIC);
+        // Damage target with spell damage only (no weapon multiplier)
+        SpellEngine.damage(caster, target, damage, SpellDamageType.MAGIC);
     }
 }
