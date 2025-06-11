@@ -13,6 +13,8 @@ import me.berrycraft.dynamicspells.Commands.CastCommand;
 import me.berrycraft.dynamicspells.Commands.SpellBookCommand;
 import me.berrycraft.dynamicspells.Spells.FireAura;
 import me.berrycraft.dynamicspells.Spells.Heal;
+import me.berrycraft.dynamicspells.Spells.Laser;
+import me.berrycraft.dynamicspells.Spells.Dash;
 
 public final class DynamicSpells extends JavaPlugin {
 
@@ -26,6 +28,8 @@ public final class DynamicSpells extends JavaPlugin {
 
         SPELLS.add(Heal.class);
         SPELLS.add(FireAura.class);
+        SPELLS.add(Laser.class);
+        SPELLS.add(Dash.class); // Assuming Dash is another spell class
 
         instance = this;
 
@@ -42,6 +46,7 @@ public final class DynamicSpells extends JavaPlugin {
         }
 
         getServer().getPluginManager().registerEvents(new SpellBookHandler(this), this);
+        getServer().getPluginManager().registerEvents(new FireAuraListener(), this);
 
         populateStringToClassMap();
         initSpells();

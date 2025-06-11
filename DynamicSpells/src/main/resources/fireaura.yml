@@ -1,51 +1,56 @@
 name: Fire Aura
 color: §c
 lore:
-  - "Creates a ring of fire around you that deals {damage} damage"
-  - "to all enemies within {radius} blocks every 0.5 seconds"
-  - "Lasts for {duration} seconds"
+  - "Become one with fire, dealing {damage} damage"
+  - "to all enemies within {radius} blocks every"
+  - "{damage_cooldown} seconds. Lasts {duration}s."
 
 1:
   damage: 1.0
+  damage_cooldown: 2
   radius: 2.0
   duration: 3.0
   cooldown: 30
-  min_uses: 3
-  max_uses: 5
-  rarity: Common
+  min_uses: 7
+  max_uses: 10
+  rarity: "COMMON"
 
 2:
-  damage: 1.5
+  damage: 2.0
+  damage_cooldown: 1.8
   radius: 2.0
   duration: 5.0
   cooldown: 30
-  min_uses: 4
-  max_uses: 6
-  rarity: Uncommon
+  min_uses: 10
+  max_uses: 20
+  rarity: "UNCOMMON"
 
 3:
-  damage: 2.0
+  damage: 3.0
+  damage_cooldown: 1.5
   radius: 3.0
   duration: 7.0
   cooldown: 30
-  min_uses: 5
-  max_uses: 7
-  rarity: Rare
+  min_uses: 20
+  max_uses: 30
+  rarity: "RARE"
 
 4:
-  damage: 2.5
+  damage: 4.0
+  damage_cooldown: 1.3
   radius: 3.0
   duration: 9.0
   cooldown: 30
-  min_uses: 6
-  max_uses: 8
-  rarity: Epic
+  min_uses: 25
+  max_uses: 40
+  rarity: "LEGENDARY"
 
 5:
-  damage: 3.0
-  radius: 4.0
+  damage: 5.0
+  damage_cooldown: 1.0
+  radius: 5.0
   duration: 12.0
-  cooldown: 30
-  min_uses: 7
-  max_uses: 9
-  rarity: Legendary
+  cooldown: 1.0
+  min_uses: 30
+  max_uses: 50
+  rarity: "MYTHIC"

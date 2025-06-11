@@ -1,0 +1,46 @@
+name: Dash
+color: §b
+lore:
+  - "Launches you forward at speed {speed}"
+  - "You become invincible for {duration} seconds"
+  - "Allows you to dodge enemy attacks and reposition quickly"
+
+1:
+  speed: 2.0
+  duration: 1.0
+  cooldown: 20
+  min_uses: 3
+  max_uses: 5
+  rarity: Common
+
+2:
+  speed: 3.0
+  duration: 1.5
+  cooldown: 20
+  min_uses: 4
+  max_uses: 6
+  rarity: Uncommon
+
+3:
+  speed: 4.0
+  duration: 2.0
+  cooldown: 20
+  min_uses: 5
+  max_uses: 7
+  rarity: Rare
+
+4:
+  speed: 5.0
+  duration: 2.5
+  cooldown: 20
+  min_uses: 6
+  max_uses: 8
+  rarity: Epic
+
+5:
+  speed: 6.0
+  duration: 3.0
+  cooldown: 20
+  min_uses: 7
+  max_uses: 9
+  rarity: Legendary

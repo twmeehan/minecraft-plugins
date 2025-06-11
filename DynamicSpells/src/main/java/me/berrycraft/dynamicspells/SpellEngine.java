@@ -11,9 +11,12 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import me.berrycraft.dynamicspells.Spells.FireAura;
+
 public class SpellEngine {
 
     public static HashMap<UUID, IExecutableSpell> activeSpells = new HashMap<UUID, IExecutableSpell>();
+    public static HashMap<UUID, FireAura> activeFireAuraCasters = new HashMap<>();
 
     public static void register(Spell spell, double duration) {
 
@@ -21,6 +24,11 @@ public class SpellEngine {
             return;
         IExecutableSpell executableSpell = (IExecutableSpell) spell;
         executableSpell.start();
+
+        if (spell instanceof FireAura) {
+            activeFireAuraCasters.put(((FireAura) spell).caster.getUniqueId(), (FireAura) spell);
+        }
+
         if (duration > 0) {
 
             activeSpells.put(spell.id, executableSpell);
@@ -35,6 +43,9 @@ public class SpellEngine {
                     executableSpell.update(time);
                     if (time > duration) {
                         activeSpells.remove(spell.id);
+                        if (spell instanceof FireAura) {
+                            activeFireAuraCasters.remove(((FireAura) spell).caster.getUniqueId());
+                        }
                         executableSpell.finish();
                         this.cancel();
                     }
@@ -47,6 +58,9 @@ public class SpellEngine {
         if (!(spell instanceof IExecutableSpell))
             return;
         activeSpells.remove(spell.id);
+        if (spell instanceof FireAura) {
+            activeFireAuraCasters.remove(((FireAura) spell).caster.getUniqueId());
+        }
     }
 
     public static void damage(Entity damager, Entity victim, double damage) {
