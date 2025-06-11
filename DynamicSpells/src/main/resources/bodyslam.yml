@@ -1,0 +1,56 @@
+name: Body Slam
+color: §e
+lore:
+  - "Launch into the air and slam down with"
+  - "massive force, dealing {damage} damage to"
+  - "all enemies within {radius} blocks."
+
+1:
+  damage: 6.0
+  vertical_boost: 1.0
+  victim_boost: 1.25
+  radius: 2.0
+  cooldown: 15
+  min_uses: 7
+  max_uses: 10
+  rarity: "COMMON"
+
+2:
+  damage: 8.0
+  vertical_boost: 1.25
+  victim_boost: 1.5
+  radius: 2.5
+  cooldown: 15
+  min_uses: 10
+  max_uses: 20
+  rarity: "UNCOMMON"
+
+3:
+  damage: 10.0
+  vertical_boost: 1.5
+  victim_boost: 1.75
+  radius: 3.0
+  cooldown: 15
+  min_uses: 20
+  max_uses: 30
+  rarity: "RARE"
+
+4:
+  damage: 14.0
+  vertical_boost: 2.0
+  victim_boost: 2.0
+  radius: 4.0
+  cooldown: 15
+  min_uses: 25
+  max_uses: 40
+  rarity: "LEGENDARY"
+
+5:
+  damage: 20.0
+  vertical_boost: 3.0
+  victim_boost: 3.0
+  radius: 6.0
+  cooldown: 15
+  min_uses: 30
+  max_uses: 50
+  rarity: "MYTHIC"
