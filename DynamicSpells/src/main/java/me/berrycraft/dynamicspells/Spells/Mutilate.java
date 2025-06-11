@@ -166,6 +166,6 @@ public class Mutilate extends Spell implements IExecutableSpell {
         }
 
         // Damage target with spell damage only (no weapon multiplier)
-        SpellEngine.damage(caster, target, damage, SpellDamageType.MAGIC);
+        SpellEngine.damage(caster, target, damage, SpellDamageType.TRUE);
     }
 }
