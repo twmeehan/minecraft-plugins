@@ -1,11 +1,17 @@
 #!/bin/bash
 
+# Create main target directory if it doesn't exist
+mkdir -p target
+
 # Function to build a specific plugin
 build_plugin() {
     local plugin_name=$1
     echo "Building $plugin_name..."
     cd "$plugin_name"
-    mvn clean package -Dmaven.repo.local=../target
+    mvn clean package
+    
+    # Copy the JAR file to the main target directory, excluding original-* files
+    cp target/[!o]*.jar ../target/ 2>/dev/null || true
     cd ..
 }
 
