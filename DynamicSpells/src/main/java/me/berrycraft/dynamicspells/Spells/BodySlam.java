@@ -26,7 +26,7 @@ import me.berrycraft.dynamicspells.SpellEngine;
 public class BodySlam extends Spell implements IExecutableSpell, Listener {
 
   public static final String NAME = "bodyslam";
-  public static final Material MATERIAL = Material.ANVIL;
+  public static final Material MATERIAL = Material.IRON_INGOT;
   public static YamlConfiguration config;
 
   private Player caster;
@@ -69,15 +69,6 @@ public class BodySlam extends Spell implements IExecutableSpell, Listener {
 
     // Play sound and particles for the initial boost
     caster.getWorld().playSound(caster.getLocation(), Sound.ENTITY_IRON_GOLEM_ATTACK, 1.0f, 0.5f);
-
-    // Create iron block particles for the initial boost
-    for (int i = 0; i < 20; i++) {
-      caster.getWorld().spawnParticle(
-          Particle.BLOCK,
-          caster.getLocation().add(0, 1, 0),
-          1, 0.3, 0.3, 0.3, 0,
-          Material.IRON_BLOCK.createBlockData());
-    }
   }
 
   @Override
@@ -117,21 +108,6 @@ public class BodySlam extends Spell implements IExecutableSpell, Listener {
 
         // Main explosion particles
         caster.getWorld().spawnParticle(Particle.CLOUD, particleLoc, 1, 0, 0, 0, 0);
-        // Main explosion particles (iron blocks)
-        caster.getWorld().spawnParticle(
-            Particle.BLOCK,
-            particleLoc,
-            1, 0, 0, 0, 0,
-            Material.IRON_BLOCK.createBlockData());
-
-        // Add some anvil particles for effect
-        if (r > radius * 0.7) { // Only on the outer ring
-          caster.getWorld().spawnParticle(
-              Particle.BLOCK,
-              particleLoc.clone().add(0, 0.5, 0),
-              1, 0.1, 0.1, 0.1, 0,
-              Material.ANVIL.createBlockData());
-        }
       }
     }
 
