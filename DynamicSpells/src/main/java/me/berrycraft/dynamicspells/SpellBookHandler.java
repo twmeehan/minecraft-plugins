@@ -217,7 +217,7 @@ public class SpellBookHandler implements Listener {
 
     private static String formatLore(String text, YamlConfiguration config, int level) {
         // Replace {heart} with red heart
-        text = text.replace("{heart}", ChatColor.RED + "❤");
+        text = text.replace("{heart}", ChatColor.RED + "❤" + ChatColor.GRAY);
 
         text = ChatColor.GRAY + text;
         // Match all {placeholders}

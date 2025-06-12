@@ -69,7 +69,7 @@ public class ConfirmPurchaseWindow extends Window {
 
                 Berry.getInstance().getAuctionConfig().set(entry.getID().toString() + ".buyer", viewer);
                 Berry.getInstance().saveConfig();
-                String name = entry.getItem().getItemMeta().hasDisplayName() ? entry.getItem().getItemMeta().getDisplayName() : entry.getItem().getItemMeta().getItemName();
+                String name = entry.getItem().getItemMeta().hasDisplayName() ? entry.getItem().getItemMeta().getDisplayName() : entry.getItem().getType().toString();
                 AuctionLogs.logAuctionAction(entry.getSeller(),viewer,name,entry.getItem().getAmount(),(int)(entry.getPrice()*100));
                 try {
                     Berry.getInstance().getAuctionConfig().save(Berry.getInstance().getAuctionFile());

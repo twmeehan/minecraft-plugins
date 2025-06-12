@@ -12,10 +12,21 @@ import java.util.UUID;
 public class AuctionLogs {
 
     private static Connection connection;
+    private static String url;
+    private static String user;
+    private static String password;
 
     public AuctionLogs(String url, String user, String password) throws SQLException {
-        AuctionLogs.connection = DriverManager.getConnection(url, user, password);
+        AuctionLogs.url = url;
+        AuctionLogs.user = user;
+        AuctionLogs.password = password;
+        connect(); // initial connection
+    }
 
+    private static void connect() throws SQLException {
+        if (connection == null || connection.isClosed() || !connection.isValid(2)) {
+            connection = DriverManager.getConnection(url, user, password);
+        }
     }
 
     public static void logAuctionAction(OfflinePlayer seller, Player buyer, String itemName, int amount, int price) {
@@ -23,16 +34,18 @@ public class AuctionLogs {
                      "(seller_name, sell_UUID, buyer_name, buyer_UUID, item_name, amount, price) " +
                      "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, seller.getName());
-            stmt.setString(2, seller.getUniqueId().toString());
-            stmt.setString(3, buyer.getName());
-            stmt.setString(4, buyer.getUniqueId().toString());
-            stmt.setString(5, itemName);
-            stmt.setInt(6, amount);
-            stmt.setInt(7, price);
-
-            stmt.executeUpdate();
+        try {
+            connect(); // <-- always check before use
+            try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+                stmt.setString(1, seller.getName());
+                stmt.setString(2, seller.getUniqueId().toString());
+                stmt.setString(3, buyer.getName());
+                stmt.setString(4, buyer.getUniqueId().toString());
+                stmt.setString(5, itemName);
+                stmt.setInt(6, amount);
+                stmt.setInt(7, price);
+                stmt.executeUpdate();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -46,3 +59,4 @@ public class AuctionLogs {
         }
     }
 }
+
