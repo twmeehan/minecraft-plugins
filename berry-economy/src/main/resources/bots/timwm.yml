@@ -1,0 +1,24 @@
+name: timwm
+buy_frequency: 50000
+sell_frequency: 200
+allowance_frequency: 1200
+allowance: 30
+max_balance: 60
+balance: 50
+items:
+  iron_ingot:
+    fair_price: 1
+    wants: 128
+    inventory: 256
+  stick:
+    fair_price: 0.1
+    wants: -192
+    inventory: 512
+  paper:
+    fair_price: 0.25
+    wants: 0
+    inventory: 256
+  leather:
+    fair_price: 0.5
+    wants: 192
+    inventory: 384 

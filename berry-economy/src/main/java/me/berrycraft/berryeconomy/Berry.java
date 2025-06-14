@@ -99,7 +99,7 @@ public final class Berry extends JavaPlugin {
         tryRegisterPurchaseLogs("jdbc:mysql://db-buf-04.sparkedhost.us:3306/s176279_berry", "u176279_AzqIUqrWkU", "aIJ9YG9eY!nrLpu6GL+CnaMZ");
         tryRegisterLootLogs("jdbc:mysql://db-buf-04.sparkedhost.us:3306/s176279_berry", "u176279_AzqIUqrWkU", "aIJ9YG9eY!nrLpu6GL+CnaMZ");
 
-        //bot = new AuctionBot(Berry.getInstance(), "timwm");
+        bot = new AuctionBot(Berry.getInstance(), "timwm");
     }
 
     public void tryRegisterActivityLogs(String url, String user, String password) {

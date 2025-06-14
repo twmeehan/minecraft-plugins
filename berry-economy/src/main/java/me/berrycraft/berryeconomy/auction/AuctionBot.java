@@ -15,29 +15,25 @@ import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.Sound;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import me.berrycraft.berryeconomy.Berry;
-import me.berrycraft.berryeconomy.BerryUtility;
 import me.berrycraft.berryeconomy.auction.windows.AuctionWindow;
-import me.berrycraft.berryeconomy.items.Pinkberry;
-import me.berrycraft.berryeconomy.items.Rainbowberry;
-import me.berrycraft.berryeconomy.items.Raspberry;
 import me.berrycraft.berryeconomy.logs.AuctionLogs;
-import net.md_5.bungee.api.ChatColor;
 
 public class AuctionBot {
     private final JavaPlugin plugin;
     private final String botName;
     private final YamlConfiguration config;
-    private final Map<Material, Integer> inventory = new HashMap<>();
     private OfflinePlayer bot;
 
     private int buyFrequency;
-    private int sellFrequency;
+    //private int sellFrequency;
+    private int allowanceFrequency;
+    private int allowance;
+    private int maxBalance;
+
 
 
     public AuctionBot(JavaPlugin plugin, String botName) {
@@ -49,17 +45,30 @@ public class AuctionBot {
         this.config = YamlConfiguration.loadConfiguration(file);
 
         this.buyFrequency = config.getInt("buy_frequency", 600);  // default 30s
-        //this.sellFrequency = config.getInt("sell_frequency", 1200); // default 1min
+        this.allowanceFrequency = config.getInt("allowance_frequency", 1200); // default 1min
+        this.allowance = config.getInt("allowance", 30);
+        this.maxBalance = config.getInt("max_balance", 60);
         init();
     }
 
     public void init() {
-        // Schedule buy loop
-        long t0 = System.currentTimeMillis();
 
-        buy();
-        long dt = System.currentTimeMillis() - t0;
-        Bukkit.broadcastMessage("Buy cycle took " + dt + " ms");
+        // Schedule allowance loop to run every allowanceFrequency ticks
+        Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
+            int currentBalance = config.getInt("balance", 0);
+            if (currentBalance < maxBalance) {
+                int newBalance = Math.min(currentBalance + allowance, maxBalance);
+                config.set("balance", newBalance);
+                saveConfig();
+                Bukkit.broadcastMessage("Bot balance updated to " + newBalance);
+            }
+        }, 120L, allowanceFrequency * 20L); // Initial delay 6 seconds, then repeat every allowanceFrequency seconds
+
+        // Schedule buy loop to run every buyFrequency ticks
+        Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
+            buy();
+        }, 120L, buyFrequency * 20L); // Initial delay 6 seconds, then repeat every buyFrequency seconds
+
     }
 
     private void buy() {
@@ -89,6 +98,7 @@ public class AuctionBot {
 
         int index = 0;
             
+        // buys the top item
         int balance = config.getInt( "balance", 0);
         while (index < sortedEntries.size()) {
 
@@ -112,8 +122,7 @@ public class AuctionBot {
             entry.setBuyer(bot);
             String name = entry.getItem().getType().toString().toLowerCase();
 
-            Berry.getInstance().getAuctionConfig().set(entry.getID().toString() + ".buyer", bot);
-            Berry.getInstance().saveConfig();
+            Berry.getInstance().getAuctionConfig().set(entry.getID().toString() + ".buyer", bot);    
             AuctionLogs.logAuctionAction(entry.getSeller(),bot,name,entry.getItem().getAmount(),(int)(entry.getPrice()*100));
             try {
                 Berry.getInstance().getAuctionConfig().save(Berry.getInstance().getAuctionFile());
@@ -140,7 +149,10 @@ public class AuctionBot {
 
             saveConfig();
             index++;
+            return;
         }
+        config.set( "balance", balance);
+
       
         
     }
