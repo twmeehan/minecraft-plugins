@@ -62,6 +62,9 @@ public class MarketEntry {
     public void setBuyer(Player p) {
         buyer = p;
     }
+    public void setBuyer(OfflinePlayer p) {
+        buyer = p;
+    }
 
     public LocalDateTime getExpirationDate() {
         return expirationDate;

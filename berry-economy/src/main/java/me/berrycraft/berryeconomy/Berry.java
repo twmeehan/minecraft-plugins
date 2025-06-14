@@ -1,5 +1,6 @@
 package me.berrycraft.berryeconomy;
 
+import me.berrycraft.berryeconomy.auction.AuctionBot;
 import me.berrycraft.berryeconomy.auction.AuctionEventHandler;
 import me.berrycraft.berryeconomy.auction.MarketEntry;
 import me.berrycraft.berryeconomy.auction.windows.AuctionWindow;
@@ -57,6 +58,7 @@ public final class Berry extends JavaPlugin {
     private AuctionLogs auctionLogs;
     private PurchaseLogs purchaseLogs;
     private LootLogs lootLogs;
+    private AuctionBot bot;
     @Override
     public void onEnable() {
 
@@ -97,6 +99,7 @@ public final class Berry extends JavaPlugin {
         tryRegisterPurchaseLogs("jdbc:mysql://db-buf-04.sparkedhost.us:3306/s176279_berry", "u176279_AzqIUqrWkU", "aIJ9YG9eY!nrLpu6GL+CnaMZ");
         tryRegisterLootLogs("jdbc:mysql://db-buf-04.sparkedhost.us:3306/s176279_berry", "u176279_AzqIUqrWkU", "aIJ9YG9eY!nrLpu6GL+CnaMZ");
 
+        //bot = new AuctionBot(Berry.getInstance(), "timwm");
     }
 
     public void tryRegisterActivityLogs(String url, String user, String password) {
