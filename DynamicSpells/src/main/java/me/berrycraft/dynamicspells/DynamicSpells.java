@@ -25,6 +25,7 @@ import me.berrycraft.dynamicspells.Spells.Mutilate;
 import me.berrycraft.dynamicspells.Spells.Recall;
 import me.berrycraft.dynamicspells.Spells.Texture;
 import me.berrycraft.dynamicspells.Spells.Place;
+import me.berrycraft.dynamicspells.Spells.Copy;
 
 public final class DynamicSpells extends JavaPlugin {
 
@@ -48,6 +49,7 @@ public final class DynamicSpells extends JavaPlugin {
         SPELLS.add(Texture.class);
         SPELLS.add(Hollow.class);
         SPELLS.add(Dig.class);
+        SPELLS.add(Copy.class);
 
         instance = this;
 
@@ -66,7 +68,7 @@ public final class DynamicSpells extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new SpellBookHandler(this), this);
         getServer().getPluginManager().registerEvents(new FireAura(), this);
         getServer().getPluginManager().registerEvents(new BodySlam(), this);
-
+        getServer().getPluginManager().registerEvents(new Copy(), this);
 
         populateStringToClassMap();
         initSpells();
