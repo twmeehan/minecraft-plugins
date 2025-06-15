@@ -1,0 +1,26 @@
+name: Wood
+color: "§6"
+lore:
+  - "Open a menu to select"
+  - "a random wood type"
+  - ""
+  - "§6Cast §e§lRIGHT-CLICK§r"
+  - "Choose your wood"
+
+1:
+  cooldown: 30
+  min_uses: 5
+  max_uses: 10
+  rarity: "COMMON"
+
+2:
+  cooldown: 20
+  min_uses: 10
+  max_uses: 15
+  rarity: "UNCOMMON"
+
+3:
+  cooldown: 10
+  min_uses: 20
+  max_uses: 35
+  rarity: "RARE" 

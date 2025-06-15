@@ -1,0 +1,31 @@
+name: Place
+color: "§a"
+lore:
+  - "Fill the selected area with blocks from your"
+  - "offhand up to a total of {max_blocks} blocks"
+  - ""
+  - "§6Select §e§lSHIFT-CLICK§r"
+  - "Select a position"
+ 
+
+
+1:
+  max_blocks: 256
+  cooldown: 5
+  min_uses: 5
+  max_uses: 10
+  rarity: "COMMON"
+
+2:
+  max_blocks: 512
+  cooldown: 5
+  min_uses: 10
+  max_uses: 15
+  rarity: "UNCOMMON"
+
+3:
+  max_blocks: 1024
+  cooldown: 5
+  min_uses: 20
+  max_uses: 35
+  rarity: "RARE" 

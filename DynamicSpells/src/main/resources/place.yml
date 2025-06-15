@@ -1,0 +1,29 @@
+name: Place
+color: "§a"
+lore:
+  - "Select two positions by right-clicking blocks"
+  - "Hold a block in your offhand and shift-right-click to fill"
+  - "the selected area with that block"
+
+  - "§7Maximum blocks: §a%max_blocks%"
+
+1:
+  max_blocks: 256
+  cooldown: 5
+  min_uses: 10
+  max_uses: 20
+  rarity: "COMMON"
+
+2:
+  max_blocks: 512
+  cooldown: 5
+  min_uses: 15
+  max_uses: 30
+  rarity: "UNCOMMON"
+
+3:
+  max_blocks: 1024
+  cooldown: 5
+  min_uses: 20
+  max_uses: 40
+  rarity: "RARE" 

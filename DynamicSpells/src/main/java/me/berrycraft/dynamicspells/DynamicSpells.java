@@ -14,13 +14,17 @@ import me.berrycraft.dynamicspells.Commands.CastCommand;
 import me.berrycraft.dynamicspells.Commands.SpellBookCommand;
 import me.berrycraft.dynamicspells.Spells.FireAura;
 import me.berrycraft.dynamicspells.Spells.Heal;
+import me.berrycraft.dynamicspells.Spells.Hollow;
 import me.berrycraft.dynamicspells.Spells.Laser;
 import me.berrycraft.dynamicspells.Spells.Dash;
+import me.berrycraft.dynamicspells.Spells.Dig;
 import me.berrycraft.dynamicspells.Spells.Berserk;
 import me.berrycraft.dynamicspells.Spells.BodySlam;
 import me.berrycraft.dynamicspells.Spells.Mutilate;
 
 import me.berrycraft.dynamicspells.Spells.Recall;
+import me.berrycraft.dynamicspells.Spells.Texture;
+import me.berrycraft.dynamicspells.Spells.Place;
 
 public final class DynamicSpells extends JavaPlugin {
 
@@ -40,6 +44,10 @@ public final class DynamicSpells extends JavaPlugin {
         SPELLS.add(Mutilate.class);
         SPELLS.add(Recall.class);
         SPELLS.add(Berserk.class);
+        SPELLS.add(Place.class);
+        SPELLS.add(Texture.class);
+        SPELLS.add(Hollow.class);
+        SPELLS.add(Dig.class);
 
         instance = this;
 
@@ -58,6 +66,7 @@ public final class DynamicSpells extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new SpellBookHandler(this), this);
         getServer().getPluginManager().registerEvents(new FireAura(), this);
         getServer().getPluginManager().registerEvents(new BodySlam(), this);
+
 
         populateStringToClassMap();
         initSpells();
