@@ -50,7 +50,11 @@ public class Leaves extends Spell implements Listener {
         
         if (!openGuis.containsKey(player.getUniqueId())) return;
         
+        // Cancel the event to prevent any inventory interaction
         event.setCancelled(true);
+        
+        // Only process clicks in the GUI inventory
+        if (event.getClickedInventory() != event.getView().getTopInventory()) return;
         
         if (event.getCurrentItem() == null) return;
         
