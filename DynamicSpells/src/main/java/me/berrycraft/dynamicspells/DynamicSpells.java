@@ -13,6 +13,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import me.berrycraft.dynamicspells.Commands.CastCommand;
 import me.berrycraft.dynamicspells.Commands.SpellBookCommand;
 import me.berrycraft.dynamicspells.Spells.FireAura;
+import me.berrycraft.dynamicspells.Spells.Fly;
 import me.berrycraft.dynamicspells.Spells.Heal;
 import me.berrycraft.dynamicspells.Spells.Hollow;
 import me.berrycraft.dynamicspells.Spells.Laser;
@@ -58,6 +59,7 @@ public final class DynamicSpells extends JavaPlugin {
         SPELLS.add(Dirt.class);
         SPELLS.add(Leaves.class);
         SPELLS.add(Copy.class);
+        SPELLS.add(Fly.class);
 
         instance = this;
 
@@ -84,7 +86,7 @@ public final class DynamicSpells extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        Fly.onServerStop();
     }
 
     public static DynamicSpells getInstance() {

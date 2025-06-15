@@ -1,0 +1,16 @@
+name: "Fly"
+color: "§b"
+lore:
+  - "§7Channel for 10 seconds to gain"
+  - "§7the ability to fly for 5 minutes."
+  - "§7Taking damage will cancel your flight."
+  - "§7Flight speed is reduced."
+
+levels:
+  1:
+    channel_time: 10
+    flight_time: 300
+    cooldown: 600
+    min_uses: 1
+    max_uses: 3
+    rarity: "MYTHIC"
