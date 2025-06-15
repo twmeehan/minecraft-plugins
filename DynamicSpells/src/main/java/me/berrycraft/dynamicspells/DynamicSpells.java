@@ -16,14 +16,18 @@ import me.berrycraft.dynamicspells.Spells.FireAura;
 import me.berrycraft.dynamicspells.Spells.Heal;
 import me.berrycraft.dynamicspells.Spells.Hollow;
 import me.berrycraft.dynamicspells.Spells.Laser;
+import me.berrycraft.dynamicspells.Spells.Leaves;
 import me.berrycraft.dynamicspells.Spells.Dash;
 import me.berrycraft.dynamicspells.Spells.Dig;
+import me.berrycraft.dynamicspells.Spells.Dirt;
 import me.berrycraft.dynamicspells.Spells.Berserk;
 import me.berrycraft.dynamicspells.Spells.BodySlam;
 import me.berrycraft.dynamicspells.Spells.Mutilate;
 
 import me.berrycraft.dynamicspells.Spells.Recall;
+import me.berrycraft.dynamicspells.Spells.Stone;
 import me.berrycraft.dynamicspells.Spells.Texture;
+import me.berrycraft.dynamicspells.Spells.Wood;
 import me.berrycraft.dynamicspells.Spells.Place;
 
 public final class DynamicSpells extends JavaPlugin {
@@ -48,7 +52,10 @@ public final class DynamicSpells extends JavaPlugin {
         SPELLS.add(Texture.class);
         SPELLS.add(Hollow.class);
         SPELLS.add(Dig.class);
-
+        SPELLS.add(Wood.class);
+        SPELLS.add(Stone.class);
+        SPELLS.add(Dirt.class);
+        SPELLS.add(Leaves.class);
         instance = this;
 
         CastCommand castCommand = new CastCommand(this);

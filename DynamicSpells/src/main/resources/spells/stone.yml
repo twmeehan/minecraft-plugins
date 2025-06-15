@@ -1,0 +1,18 @@
+name: Stone
+color: "§7"
+lore:
+  - "Open a menu to select"
+  - "a random stone type"
+
+
+1:
+  cooldown: 5
+  min_uses: 5
+  max_uses: 10
+  rarity: "COMMON"
+
+2:
+  cooldown: 5
+  min_uses: 10
+  max_uses: 20
+  rarity: "UNCOMMON"

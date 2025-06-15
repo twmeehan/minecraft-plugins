@@ -18,28 +18,29 @@ import de.tr7zw.nbtapi.NBTItem;
 
 import java.util.*;
 
-public class Wood extends Spell implements Listener {
-    public static final String NAME = "wood";
-    public static final Material MATERIAL = Material.OAK_LOG;
+public class Leaves extends Spell implements Listener {
+    public static final String NAME = "leaves";
+    public static final Material MATERIAL = Material.OAK_LEAVES;
     public static YamlConfiguration config;
     private static final Map<UUID, Inventory> openGuis = new HashMap<>();
 
-    private static final Material[] WOOD_TYPES = {
-        Material.OAK_LOG,
-        Material.BIRCH_LOG,
-        Material.SPRUCE_LOG,
-        Material.JUNGLE_LOG,
-        Material.ACACIA_LOG,
-        Material.DARK_OAK_LOG,
-        Material.MANGROVE_LOG,
-        Material.CHERRY_LOG,
-        Material.CRIMSON_STEM,
-        Material.WARPED_STEM
+    private static final Material[] LEAF_TYPES = {
+        Material.OAK_LEAVES,
+        Material.BIRCH_LEAVES,
+        Material.SPRUCE_LEAVES,
+        Material.JUNGLE_LEAVES,
+        Material.ACACIA_LEAVES,
+        Material.DARK_OAK_LEAVES,
+        Material.MANGROVE_LEAVES,
+        Material.CHERRY_LEAVES,
+        Material.AZALEA_LEAVES,
+        Material.FLOWERING_AZALEA_LEAVES,
+
     };
 
     public static void init() {
         config = loadSpellConfig(NAME);
-        Bukkit.getPluginManager().registerEvents(new Wood(), DynamicSpells.getInstance());
+        Bukkit.getPluginManager().registerEvents(new Leaves(), DynamicSpells.getInstance());
     }
 
     @EventHandler
@@ -53,11 +54,11 @@ public class Wood extends Spell implements Listener {
         
         if (event.getCurrentItem() == null) return;
         
-        // Give the selected wood to the player
-        ItemStack wood = event.getCurrentItem().clone();
-        wood.setAmount(64); // Give a full stack
-        player.getInventory().addItem(wood);
-        player.playSound(player.getLocation(), Sound.BLOCK_WOOD_PLACE, 1.0f, 1.0f);
+        // Give the selected leaves to the player
+        ItemStack leaves = event.getCurrentItem().clone();
+        leaves.setAmount(64); // Give a full stack
+        player.getInventory().addItem(leaves);
+        player.playSound(player.getLocation(), Sound.BLOCK_GRASS_PLACE, 1.0f, 1.0f);
         
         // Close the GUI
         player.closeInventory();
@@ -80,21 +81,21 @@ public class Wood extends Spell implements Listener {
 
     public static boolean cast(Player caster, int level) {
         // Create a new inventory
-        Inventory gui = Bukkit.createInventory(null, 27, "Select Wood Type");
+        Inventory gui = Bukkit.createInventory(null, 27, "Select Leaf Type");
         
-        // Get 3 random wood types
-        List<Material> availableWoods = new ArrayList<>(Arrays.asList(WOOD_TYPES));
-        Collections.shuffle(availableWoods);
+        // Get 3 random leaf types
+        List<Material> availableLeaves = new ArrayList<>(Arrays.asList(LEAF_TYPES));
+        Collections.shuffle(availableLeaves);
         
-        // Add the wood types to the GUI, spaced out
+        // Add the leaf types to the GUI, spaced out
         for (int i = 0; i < 3; i++) {
-            Material woodType = availableWoods.get(i);
-            ItemStack wood = new ItemStack(woodType);
-            ItemMeta meta = wood.getItemMeta();
-            wood.setItemMeta(meta);
+            Material leafType = availableLeaves.get(i);
+            ItemStack leaves = new ItemStack(leafType);
+            ItemMeta meta = leaves.getItemMeta();
+            leaves.setItemMeta(meta);
             
             // Space items out: slots 11, 13, and 15
-            gui.setItem(11 + (i * 2), wood);
+            gui.setItem(11 + (i * 2), leaves);
         }
         
         // Open the GUI

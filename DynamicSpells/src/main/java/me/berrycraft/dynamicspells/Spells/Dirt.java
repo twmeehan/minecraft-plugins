@@ -18,28 +18,31 @@ import de.tr7zw.nbtapi.NBTItem;
 
 import java.util.*;
 
-public class Wood extends Spell implements Listener {
-    public static final String NAME = "wood";
-    public static final Material MATERIAL = Material.OAK_LOG;
+public class Dirt extends Spell implements Listener {
+    public static final String NAME = "dirt";
+    public static final Material MATERIAL = Material.DIRT;
     public static YamlConfiguration config;
     private static final Map<UUID, Inventory> openGuis = new HashMap<>();
 
-    private static final Material[] WOOD_TYPES = {
-        Material.OAK_LOG,
-        Material.BIRCH_LOG,
-        Material.SPRUCE_LOG,
-        Material.JUNGLE_LOG,
-        Material.ACACIA_LOG,
-        Material.DARK_OAK_LOG,
-        Material.MANGROVE_LOG,
-        Material.CHERRY_LOG,
-        Material.CRIMSON_STEM,
-        Material.WARPED_STEM
+    private static final Material[] DIRT_TYPES = {
+        Material.DIRT,
+        Material.COARSE_DIRT,
+        Material.ROOTED_DIRT,
+        Material.MUD,
+        Material.PODZOL,
+        Material.MYCELIUM,
+        Material.SOUL_SOIL,
+        Material.SOUL_SAND,
+        Material.SAND,
+        Material.RED_SAND,
+        Material.GRAVEL,
+        Material.DIRT_PATH,
+        Material.MOSS_BLOCK
     };
 
     public static void init() {
         config = loadSpellConfig(NAME);
-        Bukkit.getPluginManager().registerEvents(new Wood(), DynamicSpells.getInstance());
+        Bukkit.getPluginManager().registerEvents(new Dirt(), DynamicSpells.getInstance());
     }
 
     @EventHandler
@@ -53,11 +56,11 @@ public class Wood extends Spell implements Listener {
         
         if (event.getCurrentItem() == null) return;
         
-        // Give the selected wood to the player
-        ItemStack wood = event.getCurrentItem().clone();
-        wood.setAmount(64); // Give a full stack
-        player.getInventory().addItem(wood);
-        player.playSound(player.getLocation(), Sound.BLOCK_WOOD_PLACE, 1.0f, 1.0f);
+        // Give the selected dirt to the player
+        ItemStack dirt = event.getCurrentItem().clone();
+        dirt.setAmount(64); // Give a full stack
+        player.getInventory().addItem(dirt);
+        player.playSound(player.getLocation(), Sound.BLOCK_GRAVEL_PLACE, 1.0f, 1.0f);
         
         // Close the GUI
         player.closeInventory();
@@ -80,21 +83,21 @@ public class Wood extends Spell implements Listener {
 
     public static boolean cast(Player caster, int level) {
         // Create a new inventory
-        Inventory gui = Bukkit.createInventory(null, 27, "Select Wood Type");
+        Inventory gui = Bukkit.createInventory(null, 27, "Select Dirt Type");
         
-        // Get 3 random wood types
-        List<Material> availableWoods = new ArrayList<>(Arrays.asList(WOOD_TYPES));
-        Collections.shuffle(availableWoods);
+        // Get 3 random dirt types
+        List<Material> availableDirts = new ArrayList<>(Arrays.asList(DIRT_TYPES));
+        Collections.shuffle(availableDirts);
         
-        // Add the wood types to the GUI, spaced out
+        // Add the dirt types to the GUI, spaced out
         for (int i = 0; i < 3; i++) {
-            Material woodType = availableWoods.get(i);
-            ItemStack wood = new ItemStack(woodType);
-            ItemMeta meta = wood.getItemMeta();
-            wood.setItemMeta(meta);
+            Material dirtType = availableDirts.get(i);
+            ItemStack dirt = new ItemStack(dirtType);
+            ItemMeta meta = dirt.getItemMeta();
+            dirt.setItemMeta(meta);
             
             // Space items out: slots 11, 13, and 15
-            gui.setItem(11 + (i * 2), wood);
+            gui.setItem(11 + (i * 2), dirt);
         }
         
         // Open the GUI
