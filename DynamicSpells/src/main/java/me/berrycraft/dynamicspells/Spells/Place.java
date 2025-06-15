@@ -128,6 +128,15 @@ public class Place extends Spell implements Listener {
             return false;
         }
 
+        // Track the spell cast
+        Undo.trackSpellCast(caster, NAME);
+        
+        // Track the item used (the spell book)
+        ItemStack spellBook = caster.getInventory().getItemInMainHand();
+        if (spellBook != null && spellBook.getType() == MATERIAL) {
+            Undo.trackItemUse(caster, spellBook);
+        }
+
         // Calculate volume and check if player has enough blocks
         int minX = Math.min(positions[0].getBlockX(), positions[1].getBlockX());
         int maxX = Math.max(positions[0].getBlockX(), positions[1].getBlockX());
@@ -164,6 +173,9 @@ public class Place extends Spell implements Listener {
                 for (int z = minZ; z <= maxZ; z++) {
                     Location loc = new Location(positions[0].getWorld(), x, y, z);
                     if (loc.getBlock().getType().isAir()) {
+                        // Track the block change
+                        Undo.trackBlockPlace(caster, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), Material.AIR, offhandItem.getType());
+                        
                         loc.getBlock().setType(offhandItem.getType());
                         blocksPlaced++;
                     }

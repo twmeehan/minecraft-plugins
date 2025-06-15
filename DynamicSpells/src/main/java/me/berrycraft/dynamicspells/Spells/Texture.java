@@ -113,6 +113,15 @@ public class Texture extends Spell implements Listener {
             return false;
         }
 
+        // Track the spell cast
+        Undo.trackSpellCast(caster, NAME);
+        
+        // Track the item used (the spell book)
+        ItemStack spellBook = caster.getInventory().getItemInMainHand();
+        if (spellBook != null && spellBook.getType() == MATERIAL) {
+            Undo.trackItemUse(caster, spellBook);
+        }
+
         // Get valid blocks from hotbar and count total available blocks
         List<Material> validBlocks = new ArrayList<>();
         Map<Material, Integer> availableBlocks = new HashMap<>();
@@ -194,6 +203,10 @@ public class Texture extends Spell implements Listener {
                         }
                         
                         Material randomBlock = availableTypes.get(random.nextInt(availableTypes.size()));
+                        
+                        // Track the block change
+                        Undo.trackBlockPlace(caster, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), Material.AIR, randomBlock);
+                        
                         loc.getBlock().setType(randomBlock);
                         availableBlocks.put(randomBlock, availableBlocks.get(randomBlock) - 1);
                         blocksToRemove.put(randomBlock, blocksToRemove.getOrDefault(randomBlock, 0) + 1);

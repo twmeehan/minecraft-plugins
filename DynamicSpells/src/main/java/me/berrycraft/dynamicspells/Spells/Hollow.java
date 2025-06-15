@@ -129,6 +129,15 @@ public class Hollow extends Spell implements Listener {
             return false;
         }
 
+        // Track the spell cast
+        Undo.trackSpellCast(caster, NAME);
+        
+        // Track the item used (the spell book)
+        ItemStack spellBook = caster.getInventory().getItemInMainHand();
+        if (spellBook != null && spellBook.getType() == MATERIAL) {
+            Undo.trackItemUse(caster, spellBook);
+        }
+
         // Calculate volume and check if it's within limits
         int minX = Math.min(positions[0].getBlockX(), positions[1].getBlockX());
         int maxX = Math.max(positions[0].getBlockX(), positions[1].getBlockX());
@@ -154,6 +163,9 @@ public class Hollow extends Spell implements Listener {
                     Block block = loc.getBlock();
                     
                     if (!block.getType().isAir() && !isUnbreakable(block) && !hasContainer(block)) {
+                        // Track the block change before removing it
+                        Undo.trackBlockPlace(caster, block.getX(), block.getY(), block.getZ(), block.getType(), Material.AIR);
+                        
                         block.setType(Material.AIR);
                         blocksRemoved++;
                         
@@ -167,11 +179,11 @@ public class Hollow extends Spell implements Listener {
         // Play effects
         caster.playSound(caster.getLocation(), Sound.BLOCK_STONE_BREAK, 1.0f, 1.0f);
         caster.spawnParticle(Particle.EXPLOSION, positions[0], 20, 0.5, 0.5, 0.5, 0);
-
+        
         // Clear positions after successful hollow
         selectedPositions.remove(caster);
         positionIndex.remove(caster);
-
+        
         return true;
     }
 } 

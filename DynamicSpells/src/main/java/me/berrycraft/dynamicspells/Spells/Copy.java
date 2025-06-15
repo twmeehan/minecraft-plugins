@@ -330,12 +330,19 @@ public class Copy extends Spell implements Listener {
 
         displays.add(display);
       } else {
-        // Place actual block
-        newLoc.getBlock().setBlockData(blockData.blockData);
+        // Only place block if it's air
+        if (newLoc.getBlock().getType().isAir()) {
+          // Track the block change
+          Undo.trackBlockPlace(player, newLoc.getBlockX(), newLoc.getBlockY(), newLoc.getBlockZ(), 
+              Material.AIR, blockData.material);
+          
+          // Place actual block
+          newLoc.getBlock().setBlockData(blockData.blockData);
 
-        // Play block place effect
-        player.spawnParticle(Particle.BLOCK, newLoc.add(0.5, 0.5, 0.5), 5, 0.2, 0.2, 0.2, 0,
-            blockData.blockData);
+          // Play block place effect
+          player.spawnParticle(Particle.BLOCK, newLoc.add(0.5, 0.5, 0.5), 5, 0.2, 0.2, 0.2, 0,
+              blockData.blockData);
+        }
       }
     }
 
@@ -561,6 +568,15 @@ public class Copy extends Spell implements Listener {
 
       Location pasteOrigin = calculatePasteLocation(targetBlock.getLocation(), face, state);
 
+      // Track the spell cast
+      Undo.trackSpellCast(caster, NAME);
+      
+      // Track the item used (the spell book)
+      ItemStack spellBook = caster.getInventory().getItemInMainHand();
+      if (spellBook != null && spellBook.getType() == MATERIAL) {
+        Undo.trackItemUse(caster, spellBook);
+      }
+
       // Count materials needed
       Map<Material, Integer> materials = new HashMap<>();
       for (BlockData blockData : state.storedBlocks) {
@@ -594,9 +610,15 @@ public class Copy extends Spell implements Listener {
         for (ItemStack item : caster.getInventory().getContents()) {
           if (item != null && item.getType() == entry.getKey()) {
             if (item.getAmount() <= remaining) {
+              // Track the item before removing it
+              Undo.trackItemUse(caster, item.clone());
               remaining -= item.getAmount();
               item.setAmount(0);
             } else {
+              // Track the partial item used
+              ItemStack partialItem = item.clone();
+              partialItem.setAmount(remaining);
+              Undo.trackItemUse(caster, partialItem);
               item.setAmount(item.getAmount() - remaining);
               remaining = 0;
             }

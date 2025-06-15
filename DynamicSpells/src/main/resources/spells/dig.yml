@@ -3,9 +3,6 @@ color: "§a"
 lore:
   - "Dig a 3x3x3 hole at the"
   - "target location"
-  - ""
-  - "§6Dig §e§lRIGHT-CLICK§r"
-  - "Break blocks and drop items"
 
 1:
   cooldown: 5

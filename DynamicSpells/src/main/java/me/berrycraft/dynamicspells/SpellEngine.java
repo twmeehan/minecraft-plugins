@@ -77,7 +77,7 @@ public class SpellEngine {
 
                 case MAGIC:
                     // Armor applies, but NOT enchantments (manual reduction)
-                    AttributeInstance armorAttr = target.getAttribute(Attribute.GENERIC_ARMOR);
+                    AttributeInstance armorAttr = target.getAttribute(Attribute.ARMOR);
                     double armor = armorAttr != null ? armorAttr.getValue() : 0;
                     double reduction = 1.0 - Math.min(20.0, armor) / 25.0;
                     finalDamage = damage * reduction;

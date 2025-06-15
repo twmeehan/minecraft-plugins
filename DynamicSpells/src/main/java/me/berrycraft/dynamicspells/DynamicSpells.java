@@ -1,6 +1,7 @@
 package me.berrycraft.dynamicspells;
 
 import java.lang.reflect.Field;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,7 +29,9 @@ import me.berrycraft.dynamicspells.Spells.Mutilate;
 import me.berrycraft.dynamicspells.Spells.Recall;
 import me.berrycraft.dynamicspells.Spells.Stone;
 import me.berrycraft.dynamicspells.Spells.Texture;
+import me.berrycraft.dynamicspells.Spells.Undo;
 import me.berrycraft.dynamicspells.Spells.Wood;
+import me.berrycraft.dynamicspells.database.SpellDatabase;
 import me.berrycraft.dynamicspells.Spells.Place;
 import me.berrycraft.dynamicspells.Spells.Copy;
 
@@ -38,6 +41,7 @@ public final class DynamicSpells extends JavaPlugin {
     public HashMap<String, Class<? extends Spell>> stringToClass = new HashMap<String, Class<? extends Spell>>();
 
     private static DynamicSpells instance;
+    private SpellDatabase spellDatabase;
 
     @Override
     public void onEnable() {
@@ -60,6 +64,7 @@ public final class DynamicSpells extends JavaPlugin {
         SPELLS.add(Leaves.class);
         SPELLS.add(Copy.class);
         SPELLS.add(Fly.class);
+        SPELLS.add(Undo.class);
 
         instance = this;
 
@@ -82,6 +87,12 @@ public final class DynamicSpells extends JavaPlugin {
 
         populateStringToClassMap();
         initSpells();
+
+        // try {
+        //     spellDatabase = new SpellDatabase("jdbc:mysql://db-buf-04.sparkedhost.us:3306/s177152_berrydev", "u177152_FbpOAeAcj2", "IsCCHSwVag3R=i^gjgiD@^VY");
+        // } catch (SQLException e) {
+        //     e.printStackTrace();
+        // }
     }
 
     @Override

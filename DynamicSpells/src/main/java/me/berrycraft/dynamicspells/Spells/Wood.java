@@ -34,7 +34,8 @@ public class Wood extends Spell implements Listener {
         Material.MANGROVE_LOG,
         Material.CHERRY_LOG,
         Material.CRIMSON_STEM,
-        Material.WARPED_STEM
+        Material.WARPED_STEM,
+        Material.PALE_OAK_LOG
     };
 
     public static void init() {
