@@ -1,0 +1,30 @@
+name: Copy
+color: "§b"
+lore:
+  - "Select two positions by shift-right-clicking blocks"
+  - "Right-click to copy the selected area"
+  - "Look at a block and right-click to paste"
+  - "Requires materials from your inventory to paste"
+
+  - "§7Maximum blocks: §b%max_blocks%"
+
+1:
+  max_blocks: 64
+  cooldown: 10
+  min_uses: 10
+  max_uses: 20
+  rarity: "COMMON"
+
+2:
+  max_blocks: 128
+  cooldown: 10
+  min_uses: 15
+  max_uses: 30
+  rarity: "UNCOMMON"
+
+3:
+  max_blocks: 256
+  cooldown: 10
+  min_uses: 20
+  max_uses: 40
+  rarity: "RARE"

@@ -11,3 +11,7 @@ commands:
     description: Gives a spellbook
     usage: /spellbook <spell_name> <level>
     permission: dynamicspells.spellbook
+  rotate:
+    description: Rotates the currently copied structure 90 degrees clockwise
+    usage: /rotate
+    permission: dynamicspells.rotate

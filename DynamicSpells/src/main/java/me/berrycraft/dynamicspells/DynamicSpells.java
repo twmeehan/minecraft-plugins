@@ -29,6 +29,7 @@ import me.berrycraft.dynamicspells.Spells.Stone;
 import me.berrycraft.dynamicspells.Spells.Texture;
 import me.berrycraft.dynamicspells.Spells.Wood;
 import me.berrycraft.dynamicspells.Spells.Place;
+import me.berrycraft.dynamicspells.Spells.Copy;
 
 public final class DynamicSpells extends JavaPlugin {
 
@@ -56,6 +57,8 @@ public final class DynamicSpells extends JavaPlugin {
         SPELLS.add(Stone.class);
         SPELLS.add(Dirt.class);
         SPELLS.add(Leaves.class);
+        SPELLS.add(Copy.class);
+
         instance = this;
 
         CastCommand castCommand = new CastCommand(this);
@@ -73,7 +76,7 @@ public final class DynamicSpells extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new SpellBookHandler(this), this);
         getServer().getPluginManager().registerEvents(new FireAura(), this);
         getServer().getPluginManager().registerEvents(new BodySlam(), this);
-
+        getServer().getPluginManager().registerEvents(new Copy(), this);
 
         populateStringToClassMap();
         initSpells();
