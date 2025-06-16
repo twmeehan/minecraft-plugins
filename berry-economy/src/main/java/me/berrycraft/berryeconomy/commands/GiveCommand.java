@@ -1,5 +1,6 @@
 package me.berrycraft.berryeconomy.commands;
 
+import me.berrycraft.berryeconomy.items.BuilderCrate;
 import me.berrycraft.berryeconomy.items.Pinkberry;
 import me.berrycraft.berryeconomy.items.Rainbowberry;
 import me.berrycraft.berryeconomy.items.Raspberry;
@@ -75,6 +76,9 @@ public class GiveCommand implements Listener {
                     break;
                 case "spell_book" :
                     stack = new SpellBook();
+                    break;
+                case "builder_crate" :
+                    stack = new BuilderCrate();
                     break;
 
             }
