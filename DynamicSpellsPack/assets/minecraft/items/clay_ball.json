@@ -9,7 +9,7 @@
     },
     "on_false": {
       "type": "minecraft:model",
-      "model": "minecraft:item/stone"
+      "model": "minecraft:item/clay_ball"
     }
   }
 }

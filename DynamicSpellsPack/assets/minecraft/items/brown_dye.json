@@ -5,11 +5,11 @@
     "component": "minecraft:custom_model_data",
     "on_true": {
       "type": "minecraft:model",
-      "model": "dynamic_spells:item/wood"
+      "model": "dynamic_spells:item/dirt"
     },
     "on_false": {
       "type": "minecraft:model",
-      "model": "minecraft:item/oak_log"
+      "model": "minecraft:item/brown_dye"
     }
   }
 }
