@@ -11,6 +11,9 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.block.Block;
+import org.bukkit.block.Container;
+import org.bukkit.ChatColor;
 
 import me.berrycraft.dynamicspells.DynamicSpells;
 import me.berrycraft.dynamicspells.Spell;
@@ -86,6 +89,13 @@ public class Stone extends Spell implements Listener {
     }
 
     public static boolean cast(Player caster, int level) {
+        // Check if player is looking at a container block
+        Block targetBlock = caster.getTargetBlock(null, 5);
+        if (targetBlock != null && targetBlock.getState() instanceof Container) {
+            caster.sendMessage(ChatColor.RED + "You cannot use this spell while looking at a container!");
+            return false;
+        }
+
         // Create a new inventory
         Inventory gui = Bukkit.createInventory(null, 27, "Select Stone Type");
         
