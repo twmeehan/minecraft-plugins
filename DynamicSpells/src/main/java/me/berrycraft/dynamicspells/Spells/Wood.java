@@ -20,7 +20,7 @@ import java.util.*;
 
 public class Wood extends Spell implements Listener {
     public static final String NAME = "wood";
-    public static final Material MATERIAL = Material.OAK_LOG;
+    public static final Material MATERIAL = Material.STICK;
     public static YamlConfiguration config;
     private static final Map<UUID, Inventory> openGuis = new HashMap<>();
 

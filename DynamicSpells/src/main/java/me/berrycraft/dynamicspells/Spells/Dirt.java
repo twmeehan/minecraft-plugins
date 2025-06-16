@@ -20,7 +20,7 @@ import java.util.*;
 
 public class Dirt extends Spell implements Listener {
     public static final String NAME = "dirt";
-    public static final Material MATERIAL = Material.DIRT;
+    public static final Material MATERIAL = Material.BROWN_DYE;
     public static YamlConfiguration config;
     private static final Map<UUID, Inventory> openGuis = new HashMap<>();
 
