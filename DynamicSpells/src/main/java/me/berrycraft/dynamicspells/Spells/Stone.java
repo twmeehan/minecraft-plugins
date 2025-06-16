@@ -20,7 +20,7 @@ import java.util.*;
 
 public class Stone extends Spell implements Listener {
     public static final String NAME = "stone";
-    public static final Material MATERIAL = Material.STONE;
+    public static final Material MATERIAL = Material.CLAY_BALL;
     public static YamlConfiguration config;
     private static final Map<UUID, Inventory> openGuis = new HashMap<>();
 
