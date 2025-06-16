@@ -1,0 +1,12 @@
+name: Undo
+color: §d
+lore:
+  - "Undo your last construction spell action"
+  - "Restores blocks to their original state"
+  - "and returns any items used in the process"
+
+1:
+  cooldown: 5
+  min_uses: 2
+  max_uses: 6
+  rarity: "RARE"
