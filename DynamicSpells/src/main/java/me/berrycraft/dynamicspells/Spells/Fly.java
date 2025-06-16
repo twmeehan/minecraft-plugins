@@ -12,7 +12,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -60,6 +62,27 @@ public class Fly extends Spell implements Listener {
             }
         }
     }
+
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+
+        if (flyingPlayers.containsKey(player.getUniqueId())) {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(DynamicSpells.getInstance(), () -> {
+                if (player.isOnline()) {
+                    endFlight(player);
+                }
+            }, 20L);
+        } else {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(DynamicSpells.getInstance(), () -> {
+                if (player.isOnline()) {
+                    player.setAllowFlight(false);
+                    player.setFlying(false);
+                    player.setFlySpeed(0.1f);
+                }
+            }, 20L);
+        }
+    }
     
     @EventHandler
     public void onPlayerDamage(EntityDamageEvent event) {
@@ -97,12 +120,6 @@ public class Fly extends Spell implements Listener {
         player.setFlying(false);
         player.setFlySpeed(0.1f);
 
-        
-        // Reset fly speed to original value
-        Float originalSpeed = originalFlySpeeds.remove(player.getUniqueId());
-        if (originalSpeed != null) {
-            player.setFlySpeed(originalSpeed);
-        }
         
         // Add slow falling effect
         player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_FALLING, 100, 0, false, false));
@@ -174,7 +191,7 @@ public class Fly extends Spell implements Listener {
         
         player.setAllowFlight(true);
         player.setFlying(true);
-        player.setFlySpeed(0.025f); // Slow flight speed
+        player.setFlySpeed(0.05f); // Slow flight speed
         flyingPlayers.put(player.getUniqueId(), System.currentTimeMillis());
         
         // Start flight duration task
