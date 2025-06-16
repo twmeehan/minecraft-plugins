@@ -206,6 +206,7 @@ public class BuilderCrate extends CustomItem  implements Listener{
                         dropLoot(loc, "builder_resource");
                         dropLoot(loc, "builder_resource");
                         dropLoot(loc, "builder_resource");
+                        dropLoot(loc, "redstone_resource");
 
                         stand.getWorld().spawnParticle(
                         Particle.DUST,
@@ -224,6 +225,8 @@ public class BuilderCrate extends CustomItem  implements Listener{
                         dropLoot(loc, "builder_resource");
                         dropLoot(loc, "builder_resource");
                         dropLoot(loc, "builder_resource");
+                        dropLoot(loc, "redstone_resource");
+
                         stand.getWorld().playSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 1.0f, 1);
 
                         stand.getWorld().spawnParticle(
