@@ -30,6 +30,7 @@ import org.joml.Vector3f;
 
 import me.berrycraft.dynamicspells.DynamicSpells;
 import me.berrycraft.dynamicspells.Spell;
+import net.md_5.bungee.api.ChatColor;
 import de.tr7zw.nbtapi.NBTItem;
 
 import java.util.*;
@@ -64,7 +65,9 @@ public class Copy extends Spell implements Listener {
   }
 
   private static class PlayerState {
-    SpellState state = SpellState.IDLE;
+    SpellState state = SpellState.SELECTING;
+    org.bukkit.block.BlockFace face = null;
+    Block targetBlock = null;
     Location[] positions = new Location[2];
     int positionIndex = 0;
     List<BlockData> storedBlocks = null;
@@ -99,50 +102,6 @@ public class Copy extends Spell implements Listener {
 
   private static PlayerState getPlayerState(Player player) {
     return playerStates.computeIfAbsent(player, p -> new PlayerState());
-  }
-
-  @EventHandler
-  public void onPlayerMove(PlayerMoveEvent event) {
-    Player player = event.getPlayer();
-    PlayerState state = getPlayerState(player);
-
-    // Only handle preview if we're in paste mode
-    if (state.state == SpellState.READY_TO_PASTE) {
-      // Check if player is holding the spell book
-      if (!isHoldingSpellBook(player)) {
-        clearPreview(player);
-        return;
-      }
-
-      // Get the block and face the player is looking at
-      RayTraceResult rayTrace = player.rayTraceBlocks(5);
-      if (rayTrace == null || !rayTrace.getHitBlock().getType().isSolid()) {
-        clearPreview(player);
-        return;
-      }
-
-      Block targetBlock = rayTrace.getHitBlock();
-      org.bukkit.block.BlockFace face = rayTrace.getHitBlockFace();
-      if (face == null) {
-        clearPreview(player);
-        return;
-      }
-
-      // Check if target has changed and debounce time has passed
-      long currentTime = System.currentTimeMillis();
-      if ((targetBlock.equals(state.lastTargetBlock) && face == state.lastTargetFace) ||
-          currentTime - state.lastPreviewUpdate < PREVIEW_DEBOUNCE_MS) {
-        return;
-      }
-
-      // Update tracking
-      state.lastTargetBlock = targetBlock;
-      state.lastTargetFace = face;
-      state.lastPreviewUpdate = currentTime;
-
-      // Update preview
-      updatePreview(player);
-    }
   }
 
   @EventHandler
@@ -258,7 +217,11 @@ public class Copy extends Spell implements Listener {
 
     // Update the preview if it exists
     if (!state.previewDisplays.isEmpty()) {
-      updatePreview(player);
+      for (BlockDisplay display : state.previewDisplays) {
+        display.remove();
+      }
+      state.previewDisplays.clear();
+      processBlocks(player, state, calculatePasteLocation(state.targetBlock.getLocation(), state.face, state), true);
     }
 
     player.sendMessage("§aRotated the copied blocks 90 degrees clockwise!");
@@ -300,10 +263,6 @@ public class Copy extends Spell implements Listener {
   }
 
   private static void processBlocks(Player player, PlayerState state, Location pasteOrigin, boolean isPreview) {
-    if (isPreview) {
-      // Clear old preview first
-      clearPreview(player);
-    }
 
     List<BlockDisplay> displays = new ArrayList<>();
 
@@ -363,11 +322,16 @@ public class Copy extends Spell implements Listener {
 
     // Get the block and face the player is looking at
     RayTraceResult rayTrace = player.rayTraceBlocks(5);
-    if (rayTrace == null || !rayTrace.getHitBlock().getType().isSolid())
+    if (rayTrace == null || !rayTrace.getHitBlock().getType().isSolid()) {
+      Bukkit.broadcastMessage(ChatColor.RED + "Please look at a solid block to copy!");
       return;
+    }
 
     Block targetBlock = rayTrace.getHitBlock();
     org.bukkit.block.BlockFace face = rayTrace.getHitBlockFace();
+    getPlayerState(player).face = face;
+    getPlayerState(player).targetBlock = targetBlock;
+
     if (face == null)
       return;
 
@@ -432,7 +396,7 @@ public class Copy extends Spell implements Listener {
         state.state = SpellState.SELECTING;
         state.storedBlocks = null;
         clearPreview(caster);
-        caster.sendMessage("§eEntering selection mode. Right-click blocks to set positions.");
+        //caster.sendMessage("§eEntering selection mode. Right-click blocks to set positions.");
         return false;
       }
 
@@ -441,7 +405,7 @@ public class Copy extends Spell implements Listener {
         state.state = SpellState.SELECTING;
         state.positions = new Location[2];
         state.positionIndex = 0;
-        caster.sendMessage("§eEntering selection mode. Right-click blocks to set positions.");
+        //caster.sendMessage("§eEntering selection mode. Right-click blocks to set positions.");
         return false;
       }
 
@@ -469,7 +433,6 @@ public class Copy extends Spell implements Listener {
 
             int volume = (maxX - minX + 1) * (maxY - minY + 1) * (maxZ - minZ + 1);
             caster.sendMessage("§eSelected region size: " + volume + " blocks");
-            caster.sendMessage("§eRight-click to copy this region!");
           }
         }
         return false;
@@ -482,6 +445,11 @@ public class Copy extends Spell implements Listener {
         caster.sendMessage("§cPlease select both positions first!");
         return false;
       }
+      RayTraceResult rayTrace = caster.rayTraceBlocks(5);
+      if (rayTrace == null || !rayTrace.getHitBlock().getType().isSolid()) {
+        Bukkit.broadcastMessage(ChatColor.RED + "Please look at a solid block to copy!");
+        return false;
+    }
 
       // Calculate volume and check if it's within limits
       int minX = Math.min(state.positions[0].getBlockX(), state.positions[1].getBlockX());
@@ -543,30 +511,25 @@ public class Copy extends Spell implements Listener {
       // Show copied materials
       caster.sendMessage("§aCopied region! Materials required to paste:");
       for (Map.Entry<Material, Integer> entry : materials.entrySet()) {
-        caster.sendMessage("§e" + entry.getKey().name() + ": " + entry.getValue());
+        caster.sendMessage("§e" + entry.getKey().name().toLowerCase() + ": " + entry.getValue());
       }
       caster.sendMessage("§aRight-click on a block to paste! Shift+right-click to cancel.");
 
       // Start showing preview
       updatePreview(caster);
 
-      return true;
+      return false;
     } else if (state.state == SpellState.READY_TO_PASTE) {
       // Get the block and face the player is looking at
-      RayTraceResult rayTrace = caster.rayTraceBlocks(5);
-      if (rayTrace == null || !rayTrace.getHitBlock().getType().isSolid()) {
-        caster.sendMessage("§cPlease look at a solid block to paste!");
-        return false;
-      }
 
-      Block targetBlock = rayTrace.getHitBlock();
-      org.bukkit.block.BlockFace face = rayTrace.getHitBlockFace();
+
+      org.bukkit.block.BlockFace face = state.face;
       if (face == null) {
         caster.sendMessage("§cCouldn't determine which face you're looking at!");
         return false;
       }
 
-      Location pasteOrigin = calculatePasteLocation(targetBlock.getLocation(), face, state);
+      Location pasteOrigin = calculatePasteLocation(state.targetBlock.getLocation(), face, state);
 
       // Track the spell cast
       Undo.trackSpellCast(caster, NAME);
@@ -581,12 +544,6 @@ public class Copy extends Spell implements Listener {
       Map<Material, Integer> materials = new HashMap<>();
       for (BlockData blockData : state.storedBlocks) {
         materials.put(blockData.material, materials.getOrDefault(blockData.material, 0) + 1);
-      }
-
-      // Show required materials
-      caster.sendMessage("§eRequired materials to paste:");
-      for (Map.Entry<Material, Integer> entry : materials.entrySet()) {
-        caster.sendMessage("§e" + entry.getKey().name() + ": " + entry.getValue());
       }
 
       // Check if player has all required materials
@@ -631,17 +588,20 @@ public class Copy extends Spell implements Listener {
       // Place blocks
       processBlocks(caster, state, pasteOrigin, false);
 
+      clearPreview(caster);
       // Keep the copied region after pasting
       caster.sendMessage(
-          "§aRegion pasted successfully! You can paste it again, or shift+right-click to start a new copy.");
+          "§aRegion pasted successfully!");
       return true;
     }
 
     return false;
-  }
+  }   
 
   private static void clearPreview(Player player) {
     PlayerState state = getPlayerState(player);
+    state.state = SpellState.SELECTING;
+    state.storedBlocks = null;
     for (BlockDisplay display : state.previewDisplays) {
       display.remove();
     }
