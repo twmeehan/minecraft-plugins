@@ -169,8 +169,6 @@ public class BuilderCrate extends CustomItem  implements Listener{
                         dropLoot(loc, "drop_builder_common");
                         dropLoot(loc, "builder_resource");
                         dropLoot(loc, "builder_resource");
-                        dropLoot(loc, "builder_resource");
-                        dropLoot(loc, "builder_resource");
 
 
                         stand.getWorld().spawnParticle(
@@ -185,7 +183,6 @@ public class BuilderCrate extends CustomItem  implements Listener{
 
                     } else if (rand_num < 0.8){
                         dropLoot(loc, "drop_builder_uncommon");
-                        dropLoot(loc, "builder_resource");
                         dropLoot(loc, "builder_resource");
                         dropLoot(loc, "builder_resource");
                         dropLoot(loc, "builder_resource");
@@ -205,7 +202,6 @@ public class BuilderCrate extends CustomItem  implements Listener{
                         dropLoot(loc, "builder_resource");
                         dropLoot(loc, "builder_resource");
                         dropLoot(loc, "builder_resource");
-                        dropLoot(loc, "builder_resource");
                         dropLoot(loc, "redstone_resource");
 
                         stand.getWorld().spawnParticle(
@@ -219,7 +215,7 @@ public class BuilderCrate extends CustomItem  implements Listener{
                         );
                         
                     } 
-                    else if (rand_num < 1.2){
+                    else if (rand_num < 0.99){
                         dropLoot(loc, "drop_builder_legendary");
                         dropLoot(loc, "builder_resource");
                         dropLoot(loc, "builder_resource");
@@ -244,6 +240,8 @@ public class BuilderCrate extends CustomItem  implements Listener{
                         dropLoot(loc, "builder_resource");
                         dropLoot(loc, "builder_resource");
                         dropLoot(loc, "builder_resource");
+                        dropLoot(loc, "redstone_resource");
+
                         stand.getWorld().playSound(loc, Sound.ENTITY_ENDER_DRAGON_GROWL, 1.0f, 1);
 
                         stand.getWorld().spawnParticle(

@@ -118,10 +118,5 @@ public class KeepInventoryAlternative extends JavaPlugin implements Listener {
         event.getEntity().getWorld().setGameRule(GameRule.KEEP_INVENTORY,true);
         event.setKeepInventory(true);
         event.setKeepLevel(true);
-        Player player = event.getEntity();
-        double currentHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
-        if (currentHealth > 10.0) {
-            player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(currentHealth - 2.0);
-        }
     }
 }

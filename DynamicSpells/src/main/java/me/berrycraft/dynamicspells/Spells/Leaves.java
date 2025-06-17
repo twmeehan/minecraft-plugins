@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -44,6 +45,14 @@ public class Leaves extends Spell implements Listener {
     public static void init() {
         config = loadSpellConfig(NAME);
         Bukkit.getPluginManager().registerEvents(new Leaves(), DynamicSpells.getInstance());
+    }
+    @EventHandler
+    public void onInventoryClose(InventoryCloseEvent event) {
+        if (!(event.getPlayer() instanceof Player)) return;
+        Player player = (Player)event.getPlayer();
+        if (openGuis.containsKey(player.getUniqueId())) {
+            openGuis.remove(player.getUniqueId());
+        }
     }
 
     @EventHandler

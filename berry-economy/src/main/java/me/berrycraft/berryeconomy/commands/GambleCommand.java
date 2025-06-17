@@ -64,7 +64,7 @@ public class GambleCommand implements CommandExecutor, Listener {
         lore = new ArrayList<>();
         lore.add(ChatColor.GRAY + "");
         // get stats from scoreboard
-        lore.add(ChatColor.GRAY + "Price: " + ChatColor.GOLD +"800$");
+        lore.add(ChatColor.GRAY + "Price: " + ChatColor.GOLD +"600$");
         lore.add(ChatColor.GRAY + "");
 
         lore.add(ChatColor.YELLOW + "30%" + ChatColor.GRAY + " chance for" + ChatColor.DARK_AQUA + " Uncommon");
@@ -78,6 +78,7 @@ public class GambleCommand implements CommandExecutor, Listener {
         meta = builderCrate.getItemMeta();
         meta.setDisplayName(ChatColor.GRAY + "Purchase 1" + ChatColor.WHITE + " Builder Crate");
         lore = new ArrayList<>();
+        lore.add(ChatColor.LIGHT_PURPLE + "Limited time only!");
         lore.add(ChatColor.GRAY + "");
         // get stats from scoreboard
         lore.add(ChatColor.GRAY + "Price: " + ChatColor.GOLD +"150$");
@@ -120,11 +121,11 @@ public class GambleCommand implements CommandExecutor, Listener {
                     p.sendMessage(ChatColor.RED + "You do not have enough money");
                 }
             } else if (e.getSlot()==13) {
-                if (Raspberry.getAmount(p)*0.01+ Pinkberry.getAmount(p)*0.1+ Rainbowberry.getAmount(p)>= 8) {
+                if (Raspberry.getAmount(p)*0.01+ Pinkberry.getAmount(p)*0.1+ Rainbowberry.getAmount(p)>= 6) {
                     p.sendMessage(ChatColor.GREEN + "Purchased!");
                     BerryUtility.give(p,new RareCrate());
-                    BerryUtility.removeBerries(p, 8);
-                    PurchaseLogs.logPurchase(p,"RARE_CRATE",800);
+                    BerryUtility.removeBerries(p, 6);
+                    PurchaseLogs.logPurchase(p,"RARE_CRATE",600);
                 } else {
                     p.sendMessage(ChatColor.RED + "You do not have enough money");
                 }
