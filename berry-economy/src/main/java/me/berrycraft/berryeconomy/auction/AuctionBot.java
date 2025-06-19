@@ -17,6 +17,7 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import me.berrycraft.berryeconomy.Berry;
 import me.berrycraft.berryeconomy.auction.windows.AuctionWindow;
@@ -53,22 +54,28 @@ public class AuctionBot {
 
     public void init() {
 
-        // Schedule allowance loop to run every allowanceFrequency ticks
-        Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
-            int currentBalance = config.getInt("balance", 0);
-            if (currentBalance < maxBalance) {
-                int newBalance = Math.min(currentBalance + allowance, maxBalance);
-                config.set("balance", newBalance);
-                saveConfig();
-                Bukkit.broadcastMessage("Bot balance updated to " + newBalance);
+        new BukkitRunnable() {
+
+            @Override
+            public void run() {
+                int currentBalance = config.getInt("balance", 0);
+                if (currentBalance < maxBalance) {
+                    int newBalance = Math.min(currentBalance + allowance, maxBalance);
+                    config.set("balance", newBalance);
+                    saveConfig();
+                    //Bukkit.broadcastMessage("Bot balance updated to " + newBalance);
+                }
             }
-        }, 120L, allowanceFrequency * 20L); // Initial delay 6 seconds, then repeat every allowanceFrequency seconds
-
+        }.runTaskTimer(plugin, allowanceFrequency * 20L, allowanceFrequency * 20L);
         // Schedule buy loop to run every buyFrequency ticks
-        Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
-            buy();
-        }, 120L, buyFrequency * 20L); // Initial delay 6 seconds, then repeat every buyFrequency seconds
 
+        new BukkitRunnable() {
+
+            @Override
+            public void run() {
+                buy();
+            }
+        }.runTaskTimer(plugin, buyFrequency * 20L, buyFrequency * 20L);
     }
 
     private void buy() {
@@ -86,7 +93,7 @@ public class AuctionBot {
             double entryPrice = (entry.getPrice()*100);
             double priceValue = 1.0/((entryPrice/fairPrice)+0.1);
             double value = ((double)wants/(double)entry.getItem().getType().getMaxStackSize())*priceValue;
-            if (value < 0.4) continue;
+            if (priceValue < 0.5) continue;
             values.put(entry,value);
         }
 
@@ -107,14 +114,17 @@ public class AuctionBot {
 
             // check if we have enough balance
             if (balance < price) {
+                index++;
                 continue;
             }
             // double check expired
             if (LocalDateTime.now().until(entry.getExpirationDate(), ChronoUnit.MINUTES)<0) {
+                index++;
                 continue;
             }
             // check if bought
             if (entry.getBuyer()!=null) {
+                index++;
                 continue;
             }
 
@@ -130,30 +140,44 @@ public class AuctionBot {
                 e.printStackTrace();
             }
 
-            Bukkit.broadcastMessage("bought " + name + " from "+ entry.getSeller().getName());
+            //Bukkit.broadcastMessage("bought " + name + " from "+ entry.getSeller().getName());
 
             balance -= price;
             config.set( "items."+name+".inventory", config.getInt( "items."+name+".inventory", 0)+entry.getItem().getAmount());
-            config.set( "items."+name+".wants", config.getInt( "items."+name+".wants", 0)-entry.getItem().getAmount());
+            int oldWants = config.getInt( "items."+name+".wants", 0);
+            config.set( "items."+name+".wants", oldWants-entry.getItem().getAmount());
             
             Set<String> keys = config.getConfigurationSection("items").getKeys(false);
             List<String> itemKeys = new ArrayList<>(keys);
 
             if (!itemKeys.isEmpty()) {
                 double normalizedAmountPurchased = (double)entry.getItem().getAmount()/((double)entry.getItem().getMaxStackSize());
-                String randomItem = itemKeys.get((int)(Math.random() * itemKeys.size()));
-                int addAmount = (int)(normalizedAmountPurchased*Material.getMaterial(randomItem.toUpperCase()).getMaxStackSize());
-                int current = config.getInt("items." + randomItem + ".wants", 0);
-                config.set("items." + randomItem + ".wants", current + addAmount);
+                
+                // Randomly choose 2-3 items to distribute wants to
+                int numItemsToUpdate = (int)(Math.random() * 3) + 1; // 2 or 3 items
+                numItemsToUpdate = Math.min(numItemsToUpdate, itemKeys.size()); // Don't exceed available items
+                
+                // Shuffle the item keys to randomize selection
+                List<String> shuffledItems = new ArrayList<>(itemKeys);
+                java.util.Collections.shuffle(shuffledItems);
+                
+                // Distribute the wants among the selected items
+                for (int i = 0; i < numItemsToUpdate; i++) {
+                    String randomItem = shuffledItems.get(i);
+                    int addAmount = (int)(normalizedAmountPurchased * Material.getMaterial(randomItem.toUpperCase()).getMaxStackSize() / numItemsToUpdate);
+                    int current = config.getInt("items." + randomItem + ".wants", 0);
+                    config.set("items." + randomItem + ".wants", current + addAmount);
+                }
             }
 
             saveConfig();
             index++;
+            config.set( "balance", balance);
             return;
         }
         config.set( "balance", balance);
 
-      
+       
         
     }
     private void saveConfig() {

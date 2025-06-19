@@ -10,10 +10,13 @@ import me.berrycraft.berryeconomy.items.Rainbowberry;
 import me.berrycraft.berryeconomy.items.RareCrate;
 import me.berrycraft.berryeconomy.items.Raspberry;
 import me.berrycraft.berryeconomy.items.SpellBook;
+import me.berrycraft.berryeconomy.npcs.AuctionNPC;
+import me.berrycraft.berryeconomy.npcs.ExchangeNPC;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Villager;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import java.util.stream.Collectors;
@@ -38,7 +41,7 @@ public class BerryCommand implements TabExecutor {
         }
 
         if (args.length == 0) {
-            player.sendMessage(ChatColor.RED + "Usage: /berry <give|table>");
+            player.sendMessage(ChatColor.RED + "Usage: /berry <give|table|npc>");
             return true;
         }
 
@@ -52,6 +55,9 @@ public class BerryCommand implements TabExecutor {
                 break;
             case "rig":
                 handleRig(player, args);
+                break;
+            case "npc":
+                handleNPC(player, args);
                 break;
             default:
                 player.sendMessage(ChatColor.RED + "Invalid subcommand: " + subcommand);
@@ -204,10 +210,37 @@ public class BerryCommand implements TabExecutor {
         }
     }
 
+    private void handleNPC(Player player, String[] args) {
+        if (args.length != 2) {
+            player.sendMessage(ChatColor.RED + "Usage: /berry npc <auction|exchange>");
+            return;
+        }
+
+        String npcType = args[1].toLowerCase();
+        
+        // Spawn a villager at the player's location
+        Villager villager = player.getWorld().spawn(player.getLocation(), Villager.class);
+        
+        switch (npcType) {
+            case "auction":
+                AuctionNPC.markAsAuctionNPC(villager);
+                player.sendMessage(ChatColor.GREEN + "Created Auction Master NPC!");
+                break;
+            case "exchange":
+                ExchangeNPC.markAsExchangeNPC(villager);
+                player.sendMessage(ChatColor.GREEN + "Created Exchange Master NPC!");
+                break;
+            default:
+                player.sendMessage(ChatColor.RED + "Invalid NPC type. Use 'auction' or 'exchange'.");
+                villager.remove();
+                return;
+        }
+    }
+
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 1) {
-            return Arrays.asList("give", "table").stream()
+            return Arrays.asList("give", "table", "npc").stream()
                     .filter(s -> s.startsWith(args[0].toLowerCase()))
                     .collect(Collectors.toList());
         }

@@ -24,6 +24,8 @@ import me.berrycraft.berryeconomy.logs.AuctionLogs;
 import me.berrycraft.berryeconomy.logs.LootLogs;
 import me.berrycraft.berryeconomy.logs.PlayerActivityLogs;
 import me.berrycraft.berryeconomy.logs.PurchaseLogs;
+import me.berrycraft.berryeconomy.npcs.AuctionNPC;
+import me.berrycraft.berryeconomy.npcs.ExchangeNPC;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -72,6 +74,10 @@ public final class Berry extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new RareCrate(), this);
         getServer().getPluginManager().registerEvents(new CustomLootEventHandler(), this);
         getServer().getPluginManager().registerEvents(new WeightInputHandler(), this);
+
+        // Register NPC event listeners
+        getServer().getPluginManager().registerEvents(new AuctionNPC(this), this);
+        getServer().getPluginManager().registerEvents(new ExchangeNPC(this), this);
 
         ensureScoreboardsExist();
         this.initAuction();
