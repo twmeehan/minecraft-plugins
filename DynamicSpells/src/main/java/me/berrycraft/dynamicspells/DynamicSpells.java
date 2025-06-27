@@ -77,6 +77,9 @@ public final class DynamicSpells extends JavaPlugin {
             return null;
         return SpellBookHandler.getSpellBook(getInstance().stringToClass.get(spellName), level);
     }
+    public static ItemStack resetSpellBookLives(ItemStack book) {
+        return SpellBookHandler.updateSpellBook(book, true);
+    }
 
     public static void cast(String spellName) {
 

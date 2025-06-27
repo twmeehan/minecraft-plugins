@@ -12,6 +12,7 @@ import me.berrycraft.berryeconomy.items.Raspberry;
 import me.berrycraft.berryeconomy.items.SpellBook;
 import me.berrycraft.berryeconomy.npcs.AuctionNPC;
 import me.berrycraft.berryeconomy.npcs.ExchangeNPC;
+import me.berrycraft.dynamicspells.DynamicSpells;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
@@ -21,6 +22,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import java.util.stream.Collectors;
 
+import de.tr7zw.nbtapi.NBTItem;
 
 import java.util.*;
 
@@ -41,7 +43,7 @@ public class BerryCommand implements TabExecutor {
         }
 
         if (args.length == 0) {
-            player.sendMessage(ChatColor.RED + "Usage: /berry <give|table|npc>");
+            player.sendMessage(ChatColor.RED + "Usage: /berry <give|table|rig|npc|repair>");
             return true;
         }
 
@@ -59,11 +61,32 @@ public class BerryCommand implements TabExecutor {
             case "npc":
                 handleNPC(player, args);
                 break;
+            case "repair":
+                handleRepair(player, args);
+                break;
             default:
                 player.sendMessage(ChatColor.RED + "Invalid subcommand: " + subcommand);
         }
 
         return true;
+    }
+
+    private void handleRepair(Player player, String[] args) {
+        ItemStack itemInHand = player.getInventory().getItemInMainHand();
+        
+        if (itemInHand == null || itemInHand.getType().isAir()) {
+            player.sendMessage(ChatColor.RED + "You must be holding an item to repair it.");
+            return;
+        }
+        
+        NBTItem nbti = new NBTItem(itemInHand);
+        if (!"spell_book".equals(nbti.getString("CustomItem"))) {
+            player.sendMessage(ChatColor.RED + "The item in your hand is not a spell book.");
+            return;
+        }
+        
+        DynamicSpells.resetSpellBookLives(itemInHand);
+        player.sendMessage(ChatColor.GREEN + "Spell book repaired! Uses have been reset.");
     }
 
     private void handleRig(Player sender, String[] args) {
@@ -240,7 +263,7 @@ public class BerryCommand implements TabExecutor {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 1) {
-            return Arrays.asList("give", "table", "npc").stream()
+            return Arrays.asList("give", "table", "rig", "npc", "repair").stream()
                     .filter(s -> s.startsWith(args[0].toLowerCase()))
                     .collect(Collectors.toList());
         }
