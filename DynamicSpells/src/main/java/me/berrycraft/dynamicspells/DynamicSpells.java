@@ -1,6 +1,7 @@
 package me.berrycraft.dynamicspells;
 
 import java.lang.reflect.Field;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,14 +14,26 @@ import org.bukkit.plugin.java.JavaPlugin;
 import me.berrycraft.dynamicspells.Commands.CastCommand;
 import me.berrycraft.dynamicspells.Commands.SpellBookCommand;
 import me.berrycraft.dynamicspells.Spells.FireAura;
+import me.berrycraft.dynamicspells.Spells.Fly;
 import me.berrycraft.dynamicspells.Spells.Heal;
+import me.berrycraft.dynamicspells.Spells.Hollow;
 import me.berrycraft.dynamicspells.Spells.Laser;
+import me.berrycraft.dynamicspells.Spells.Leaves;
 import me.berrycraft.dynamicspells.Spells.Dash;
+import me.berrycraft.dynamicspells.Spells.Dig;
+import me.berrycraft.dynamicspells.Spells.Dirt;
 import me.berrycraft.dynamicspells.Spells.Berserk;
 import me.berrycraft.dynamicspells.Spells.BodySlam;
 import me.berrycraft.dynamicspells.Spells.Mutilate;
 
 import me.berrycraft.dynamicspells.Spells.Recall;
+import me.berrycraft.dynamicspells.Spells.Stone;
+import me.berrycraft.dynamicspells.Spells.Texture;
+import me.berrycraft.dynamicspells.Spells.Undo;
+import me.berrycraft.dynamicspells.Spells.Wood;
+import me.berrycraft.dynamicspells.database.SpellDatabase;
+import me.berrycraft.dynamicspells.Spells.Place;
+import me.berrycraft.dynamicspells.Spells.Copy;
 
 public final class DynamicSpells extends JavaPlugin {
 
@@ -28,6 +41,7 @@ public final class DynamicSpells extends JavaPlugin {
     public HashMap<String, Class<? extends Spell>> stringToClass = new HashMap<String, Class<? extends Spell>>();
 
     private static DynamicSpells instance;
+    private SpellDatabase spellDatabase;
 
     @Override
     public void onEnable() {
@@ -40,6 +54,17 @@ public final class DynamicSpells extends JavaPlugin {
         SPELLS.add(Mutilate.class);
         SPELLS.add(Recall.class);
         SPELLS.add(Berserk.class);
+        SPELLS.add(Place.class);
+        SPELLS.add(Texture.class);
+        SPELLS.add(Hollow.class);
+        SPELLS.add(Dig.class);
+        SPELLS.add(Wood.class);
+        SPELLS.add(Stone.class);
+        SPELLS.add(Dirt.class);
+        SPELLS.add(Leaves.class);
+        SPELLS.add(Copy.class);
+        SPELLS.add(Fly.class);
+        SPELLS.add(Undo.class);
 
         instance = this;
 
@@ -58,14 +83,21 @@ public final class DynamicSpells extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new SpellBookHandler(this), this);
         getServer().getPluginManager().registerEvents(new FireAura(), this);
         getServer().getPluginManager().registerEvents(new BodySlam(), this);
+        getServer().getPluginManager().registerEvents(new Copy(), this);
 
         populateStringToClassMap();
         initSpells();
+
+        // try {
+        //     spellDatabase = new SpellDatabase("jdbc:mysql://db-buf-04.sparkedhost.us:3306/s177152_berrydev", "u177152_FbpOAeAcj2", "IsCCHSwVag3R=i^gjgiD@^VY");
+        // } catch (SQLException e) {
+        //     e.printStackTrace();
+        // }
     }
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        Fly.onServerStop();
     }
 
     public static DynamicSpells getInstance() {

@@ -1,0 +1,94 @@
+# Undo Configuration
+# This file controls the behavior of the undo system
+
+# Maximum number of actions that can be undone per player
+max_undo_history: 10
+
+# Time in seconds after which an undo action expires
+undo_expiry_time: 300
+
+# Whether to show particle effects when undoing actions
+show_particles: true
+
+# Whether to play sound effects when undoing actions
+play_sounds: true
+
+# Sound to play when undoing an action
+undo_sound: BLOCK_NOTE_BLOCK_PLING
+undo_sound_volume: 1.0
+undo_sound_pitch: 2.0
+
+# Particle effect to show when undoing an action
+undo_particle: END_ROD
+undo_particle_count: 10
+
+# Messages
+messages:
+  undo_success: "§aSuccessfully undone your last action!"
+  undo_failed: "§cNo actions to undo!"
+  undo_expired: "§cYour last action has expired and cannot be undone."
+  undo_disabled: "§cUndo is currently disabled."
+  undo_cooldown: "§cYou must wait {time} seconds before undoing another action."
+  undo_invalid: "§cThe last action cannot be undone."
+  undo_no_permission: "§cYou don't have permission to use undo!"
+
+# Cooldown in seconds between undo actions
+undo_cooldown: 5
+
+# Whether to enable undo functionality
+enabled: true
+
+# List of worlds where undo is disabled
+disabled_worlds:
+  - "world_nether"
+  - "world_the_end"
+
+# Maximum number of blocks that can be affected by a single undo action
+max_blocks_per_undo: 1000
+
+# Whether to log undo actions to console
+log_undo_actions: true
+
+# Whether to save undo history to database
+save_to_database: true
+
+# Database settings (if save_to_database is true)
+database:
+  type: "sqlite" # or "mysql"
+  mysql:
+    host: "localhost"
+    port: 3306
+    database: "dynamicspells"
+    username: "root"
+    password: "password"
+  sqlite:
+    file: "undo_history.db"
+
+name: Undo
+color: §d
+lore:
+  - "Undo your last construction spell action"
+  - "Restores blocks to their original state"
+  - "Returns any items used in the process"
+  - "Maximum blocks: §d%max_blocks%"
+
+1:
+  max_blocks: 256
+  cooldown: 5
+  min_uses: 10
+  max_uses: 20
+  rarity: "COMMON"
+
+2:
+  max_blocks: 512
+  cooldown: 5
+  min_uses: 15
+  max_uses: 30
+  rarity: "UNCOMMON"
+
+3:
+  max_blocks: 1024
+  cooldown: 5
+  min_uses: 20
+  max_uses: 40
+  rarity: "RARE" 

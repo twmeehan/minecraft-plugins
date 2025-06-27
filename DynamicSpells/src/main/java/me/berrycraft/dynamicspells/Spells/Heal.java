@@ -22,7 +22,7 @@ public class Heal extends Spell {
 
     public static boolean cast(Player caster, int level) {
         double healAmount = config.getDouble(level + ".heal");
-        caster.setHealth(Math.min(caster.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue(),
+        caster.setHealth(Math.min(caster.getAttribute(Attribute.MAX_HEALTH).getBaseValue(),
                 caster.getHealth() + healAmount * 2));
 
         caster.getWorld().playSound(caster.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);

@@ -17,6 +17,7 @@ import me.berrycraft.berryeconomy.custom_loot.CustomLootEventHandler;
 import me.berrycraft.berryeconomy.custom_loot.CustomLootTable;
 import me.berrycraft.berryeconomy.custom_loot.RigLoot;
 import me.berrycraft.berryeconomy.custom_loot.WeightInputHandler;
+import me.berrycraft.berryeconomy.items.BuilderCrate;
 import me.berrycraft.berryeconomy.items.CommonCrate;
 import me.berrycraft.berryeconomy.items.CustomItemEventHandler;
 import me.berrycraft.berryeconomy.items.RareCrate;
@@ -72,6 +73,8 @@ public final class Berry extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new BerryLoot(), this);
         getServer().getPluginManager().registerEvents(new CommonCrate(), this);
         getServer().getPluginManager().registerEvents(new RareCrate(), this);
+        getServer().getPluginManager().registerEvents(new BuilderCrate(), this);
+
         getServer().getPluginManager().registerEvents(new CustomLootEventHandler(), this);
         getServer().getPluginManager().registerEvents(new WeightInputHandler(), this);
 

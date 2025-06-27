@@ -4,6 +4,7 @@ import me.berrycraft.berryeconomy.custom_loot.CustomLootEventHandler;
 import me.berrycraft.berryeconomy.custom_loot.CustomLootTable;
 import me.berrycraft.berryeconomy.custom_loot.CustomLootTableWindow;
 import me.berrycraft.berryeconomy.custom_loot.RigLoot;
+import me.berrycraft.berryeconomy.items.BuilderCrate;
 import me.berrycraft.berryeconomy.items.CommonCrate;
 import me.berrycraft.berryeconomy.items.Pinkberry;
 import me.berrycraft.berryeconomy.items.Rainbowberry;
@@ -128,7 +129,7 @@ public class BerryCommand implements TabExecutor {
         else if (itemName.equals("spell_book")) stack = new SpellBook();
         else if (itemName.equals("common_crate")) stack = new CommonCrate();
         else if (itemName.equals("rare_crate")) stack = new RareCrate();
-
+        else if (itemName.equals("builder_crate")) stack = new BuilderCrate();
 
         if (stack == null) {
             sender.sendMessage(ChatColor.RED + "Unknown item: " + itemName);
@@ -281,7 +282,7 @@ public class BerryCommand implements TabExecutor {
         }
 
         if (args.length == 3 && args[0].equalsIgnoreCase("give")) {
-            return Arrays.asList("rainbowberry", "pinkberry", "raspberry", "spell_book","common_crate","rare_crate").stream()
+            return Arrays.asList("rainbowberry", "pinkberry", "raspberry", "spell_book","common_crate","rare_crate","builder_crate").stream()
                     .filter(s -> s.startsWith(args[2].toLowerCase()))
                     .collect(Collectors.toList());
         }
