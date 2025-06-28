@@ -100,7 +100,7 @@ public class AuctionBot {
                 // Reschedule the next run
                 startBuyLoop();
             }
-        }.runTaskLater(plugin, auctionTurnoverGoal * 20L / Math.max(1, AuctionWindow.marketEntries.size()));
+        }.runTaskLater(plugin, auctionTurnoverGoal * 20L / Math.max(14, AuctionWindow.marketEntries.size()));
     }
 
     private void buy() {
