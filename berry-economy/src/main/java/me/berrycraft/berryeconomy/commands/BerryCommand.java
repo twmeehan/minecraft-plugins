@@ -13,6 +13,7 @@ import me.berrycraft.berryeconomy.items.Raspberry;
 import me.berrycraft.berryeconomy.items.SpellBook;
 import me.berrycraft.berryeconomy.npcs.AuctionNPC;
 import me.berrycraft.berryeconomy.npcs.ExchangeNPC;
+import me.berrycraft.berryeconomy.npcs.RepairNPC;
 import me.berrycraft.dynamicspells.DynamicSpells;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -236,7 +237,7 @@ public class BerryCommand implements TabExecutor {
 
     private void handleNPC(Player player, String[] args) {
         if (args.length != 2) {
-            player.sendMessage(ChatColor.RED + "Usage: /berry npc <auction|exchange>");
+            player.sendMessage(ChatColor.RED + "Usage: /berry npc <auction|exchange|repair>");
             return;
         }
 
@@ -254,8 +255,12 @@ public class BerryCommand implements TabExecutor {
                 ExchangeNPC.markAsExchangeNPC(villager);
                 player.sendMessage(ChatColor.GREEN + "Created Exchange Master NPC!");
                 break;
+            case "repair":
+                RepairNPC.markAsRepairNPC(villager);
+                player.sendMessage(ChatColor.AQUA + "Created Spellbook Repair Specialist NPC!");
+                break;
             default:
-                player.sendMessage(ChatColor.RED + "Invalid NPC type. Use 'auction' or 'exchange'.");
+                player.sendMessage(ChatColor.RED + "Invalid NPC type. Use 'auction', 'exchange', or 'repair'.");
                 villager.remove();
                 return;
         }

@@ -5,6 +5,7 @@ import java.util.LinkedList;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -93,9 +94,9 @@ public class GambleCommand implements CommandExecutor, Listener {
         builderCrate.setItemMeta(meta);
 
         // place items in their correct slots
-        GUI.setItem(11, commonCrate);
-        GUI.setItem(13, rareCrate);
-        GUI.setItem(15, builderCrate);
+        GUI.setItem(12, commonCrate);
+        GUI.setItem(14, rareCrate);
+        //GUI.setItem(15, builderCrate);
 
         p.openInventory(GUI);
         return true;
@@ -111,8 +112,9 @@ public class GambleCommand implements CommandExecutor, Listener {
 
         // if player clicks their own inventory do nothing
         if (e.getClickedInventory()!=p.getInventory()) {
-            if (e.getSlot()==11) {
+            if (e.getSlot()==12) {
                 if (Raspberry.getAmount(p)*0.01+ Pinkberry.getAmount(p)*0.1+ Rainbowberry.getAmount(p)>= 1) {
+                    p.playSound(p, Sound.BLOCK_AMETHYST_CLUSTER_PLACE,2.0f,1.3f);
                     p.sendMessage(ChatColor.GREEN + "Purchased!");
                     BerryUtility.give(p,new CommonCrate());
                     BerryUtility.removeBerries(p, 1);
@@ -120,8 +122,9 @@ public class GambleCommand implements CommandExecutor, Listener {
                 } else {
                     p.sendMessage(ChatColor.RED + "You do not have enough money");
                 }
-            } else if (e.getSlot()==13) {
+            } else if (e.getSlot()==14) {
                 if (Raspberry.getAmount(p)*0.01+ Pinkberry.getAmount(p)*0.1+ Rainbowberry.getAmount(p)>= 6) {
+                    p.playSound(p, Sound.BLOCK_AMETHYST_CLUSTER_PLACE,2.0f,1.3f);
                     p.sendMessage(ChatColor.GREEN + "Purchased!");
                     BerryUtility.give(p,new RareCrate());
                     BerryUtility.removeBerries(p, 6);
@@ -129,16 +132,17 @@ public class GambleCommand implements CommandExecutor, Listener {
                 } else {
                     p.sendMessage(ChatColor.RED + "You do not have enough money");
                 }
-            } else if (e.getSlot()==15) {
-                if (Raspberry.getAmount(p)*0.01+ Pinkberry.getAmount(p)*0.1+ Rainbowberry.getAmount(p)>= 1.5) {
-                    p.sendMessage(ChatColor.GREEN + "Purchased!");
-                    BerryUtility.give(p,new BuilderCrate());
-                    BerryUtility.removeBerries(p, 1.5);
-                    PurchaseLogs.logPurchase(p,"BUILDER_CRATE",150);
-                } else {
-                    p.sendMessage(ChatColor.RED + "You do not have enough money");
-                }
-            }
+            } 
+            // else if (e.getSlot()==15) {
+            //     if (Raspberry.getAmount(p)*0.01+ Pinkberry.getAmount(p)*0.1+ Rainbowberry.getAmount(p)>= 1.5) {
+            //         p.sendMessage(ChatColor.GREEN + "Purchased!");
+            //         BerryUtility.give(p,new BuilderCrate());
+            //         BerryUtility.removeBerries(p, 1.5);
+            //         PurchaseLogs.logPurchase(p,"BUILDER_CRATE",150);
+            //     } else {
+            //         p.sendMessage(ChatColor.RED + "You do not have enough money");
+            //     }
+            // }
         }
         e.setCancelled(true);
     }

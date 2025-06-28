@@ -29,7 +29,7 @@ public class AuctionBot {
     private final YamlConfiguration config;
     private OfflinePlayer bot;
 
-    private int buyFrequency;
+    private int auctionTurnoverGoal;
     //private int sellFrequency;
     private int allowanceFrequency;
     private int allowance;
@@ -45,7 +45,10 @@ public class AuctionBot {
         File file = new File(plugin.getDataFolder(), "bots/" + botName + ".yml");
         this.config = YamlConfiguration.loadConfiguration(file);
 
-        this.buyFrequency = config.getInt("buy_frequency", 600);  // default 30s
+        // the amount of time that the bot aims to purchase all items in the auction in
+        // eg buy every item in the auction house in 1 week
+        this.auctionTurnoverGoal = config.getInt("auction_turnover_goal", 600);
+
         this.allowanceFrequency = config.getInt("allowance_frequency", 1200); // default 1min
         this.allowance = config.getInt("allowance", 30);
         this.maxBalance = config.getInt("max_balance", 60);
@@ -67,15 +70,37 @@ public class AuctionBot {
                 }
             }
         }.runTaskTimer(plugin, allowanceFrequency * 20L, allowanceFrequency * 20L);
-        // Schedule buy loop to run every buyFrequency ticks
+        // Schedule buy loop to run every auctionTurnoverGoal ticks
 
+        startBuyLoop();
+        
+        // Schedule wants reset
+        int resetFrequency = config.getInt("reset_frequency", 36000); // default 1 hour
         new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (config.contains("items")) {
+                    Set<String> keys = config.getConfigurationSection("items").getKeys(false);
+                    for (String key : keys) {
+                        int def = config.getInt("items." + key + ".default", 64);
+                        config.set("items." + key + ".wants", def);
+                    }
+                    saveConfig();
+                }
+            }
+        }.runTaskTimer(plugin, 0, resetFrequency * 20L);
+    }
 
+    public void startBuyLoop() {
+        new BukkitRunnable() {
             @Override
             public void run() {
                 buy();
+    
+                // Reschedule the next run
+                startBuyLoop();
             }
-        }.runTaskTimer(plugin, buyFrequency * 20L, buyFrequency * 20L);
+        }.runTaskLater(plugin, auctionTurnoverGoal * 20L / Math.max(1, AuctionWindow.marketEntries.size()));
     }
 
     private void buy() {
@@ -127,7 +152,6 @@ public class AuctionBot {
                 index++;
                 continue;
             }
-
             
             entry.setBuyer(bot);
             String name = entry.getItem().getType().toString().toLowerCase();
@@ -143,6 +167,9 @@ public class AuctionBot {
             //Bukkit.broadcastMessage("bought " + name + " from "+ entry.getSeller().getName());
 
             balance -= price;
+
+            plugin.getLogger().info("Bought " + name + "[" + sortedEntries.get(index).getValue() + "]" + " from "+ entry.getSeller().getName() + " for " + price + " (Current balance: " + balance + " Next Purchase in: " + (auctionTurnoverGoal / Math.max(1, AuctionWindow.marketEntries.size())) + "s)");
+
             config.set( "items."+name+".inventory", config.getInt( "items."+name+".inventory", 0)+entry.getItem().getAmount());
             int oldWants = config.getInt( "items."+name+".wants", 0);
             config.set( "items."+name+".wants", oldWants-entry.getItem().getAmount());

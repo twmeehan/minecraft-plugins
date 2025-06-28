@@ -27,6 +27,8 @@ import me.berrycraft.berryeconomy.logs.PlayerActivityLogs;
 import me.berrycraft.berryeconomy.logs.PurchaseLogs;
 import me.berrycraft.berryeconomy.npcs.AuctionNPC;
 import me.berrycraft.berryeconomy.npcs.ExchangeNPC;
+import me.berrycraft.berryeconomy.npcs.RepairNPC;
+import me.berrycraft.berryeconomy.windows.RepairWindow;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -81,6 +83,8 @@ public final class Berry extends JavaPlugin {
         // Register NPC event listeners
         getServer().getPluginManager().registerEvents(new AuctionNPC(this), this);
         getServer().getPluginManager().registerEvents(new ExchangeNPC(this), this);
+        getServer().getPluginManager().registerEvents(new RepairNPC(this), this);
+
 
         ensureScoreboardsExist();
         this.initAuction();
@@ -101,6 +105,7 @@ public final class Berry extends JavaPlugin {
 
         BerryLoot.init();
         RigLoot.init();
+        RepairWindow.init(this);
 
         // Player join and leave logs
         tryRegisterActivityLogs("jdbc:mysql://db-buf-04.sparkedhost.us:3306/s176279_berry", "u176279_AzqIUqrWkU", "aIJ9YG9eY!nrLpu6GL+CnaMZ");

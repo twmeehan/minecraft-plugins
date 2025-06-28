@@ -1,6 +1,7 @@
 package me.berrycraft.berryeconomy.npcs;
 
-import me.berrycraft.berryeconomy.commands.ExchangeCommand;
+import me.berrycraft.berryeconomy.Berry;
+import me.berrycraft.berryeconomy.windows.RepairWindow;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -11,45 +12,38 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import me.berrycraft.berryeconomy.Berry;
-
-public class ExchangeNPC implements Listener {
+public class RepairNPC implements Listener {
     private final JavaPlugin plugin;
     private static final NamespacedKey NPC_TYPE_KEY = new NamespacedKey(Berry.getInstance(), "npc_type");
 
-    public ExchangeNPC(JavaPlugin plugin) {
+    public RepairNPC(JavaPlugin plugin) {
         this.plugin = plugin;
     }
 
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
         Entity entity = event.getRightClicked();
-        
-        if (!(entity instanceof Villager)) {
-            return;
-        }
-
+        if (!(entity instanceof Villager)) return;
         Villager villager = (Villager) entity;
         String npcType = villager.getPersistentDataContainer().get(NPC_TYPE_KEY, PersistentDataType.STRING);
-        
-        if ("exchange".equals(npcType)) {
+        if ("repair".equals(npcType)) {
             event.setCancelled(true);
             Player player = event.getPlayer();
-            ExchangeCommand.openExchangeWindow(player);
+            RepairWindow.open(player);
         }
     }
 
-    public static void markAsExchangeNPC(Villager villager) {
-        villager.getPersistentDataContainer().set(NPC_TYPE_KEY, PersistentDataType.STRING, "exchange");
-        villager.setCustomName("§a§lMoney Changer");
+    public static void markAsRepairNPC(Villager villager) {
+        villager.getPersistentDataContainer().set(NPC_TYPE_KEY, PersistentDataType.STRING, "repair");
+        villager.setCustomName("§b§lSpellbook Repair Specialist");
         villager.setCustomNameVisible(true);
-        villager.setProfession(Villager.Profession.CLERIC);
+        villager.setProfession(Villager.Profession.TOOLSMITH);
         villager.setAI(false);
         villager.setInvulnerable(true);
     }
 
-    public static boolean isExchangeNPC(Villager villager) {
+    public static boolean isRepairNPC(Villager villager) {
         String npcType = villager.getPersistentDataContainer().get(NPC_TYPE_KEY, PersistentDataType.STRING);
-        return "exchange".equals(npcType);
+        return "repair".equals(npcType);
     }
-} 
+}

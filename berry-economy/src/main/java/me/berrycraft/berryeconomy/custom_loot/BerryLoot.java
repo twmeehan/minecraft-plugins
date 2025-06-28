@@ -65,7 +65,7 @@ public class BerryLoot implements Listener {
         Random rand = new Random();
         int berries = 0;
         if (Math.random() > 0.5)
-            berries = rand.nextInt(5)+2;
+            berries = rand.nextInt(5)+4;
         LinkedList<ItemStack> loot = distributeBerries(berries,rand);
         return loot;
 
@@ -73,7 +73,7 @@ public class BerryLoot implements Listener {
 
     public static LinkedList<ItemStack> getUncommon() {
         Random rand = new Random();
-        int berries = rand.nextInt(10)+10;
+        int berries = rand.nextInt(20)+15;
         LinkedList<ItemStack> loot = distributeBerries(berries,rand);
         return loot;
 
@@ -81,7 +81,7 @@ public class BerryLoot implements Listener {
 
     public static LinkedList<ItemStack> getRare() {
         Random rand = new Random();
-        int berries = (rand.nextInt(2)+2)*10;
+        int berries = (rand.nextInt(2)+3)*10;
         if (Math.random()>0.6) {
             berries += rand.nextInt(6);
         }
@@ -99,7 +99,7 @@ public class BerryLoot implements Listener {
 
     // breaks stacks into small randomized amounts
     public static LinkedList<ItemStack> distributeBerries(int count, Random rand) {
-
+        count = (int)(count * 1.25);
         LinkedList<ItemStack> loot = new LinkedList<>();
         while (count - 100 > 0) {
             loot.add(new Rainbowberry());
