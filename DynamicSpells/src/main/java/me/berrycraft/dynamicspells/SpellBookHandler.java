@@ -183,15 +183,59 @@ public class SpellBookHandler implements Listener {
         return nbti.getItem();
     }
 
-    private static String getStaticNameViaReflection(Class<?> spell) {
-    try {
-        Field field = spell.getField("NAME");
-        return (String) field.get(null);
-    } catch (Exception e) {
-        e.printStackTrace();
-        return spell.getSimpleName();
+    public static ItemStack updateSpellBook(ItemStack book, boolean resetLives) {
+        NBTItem nbti = new NBTItem(book);
+        if (!"spell_book".equals(nbti.getString("CustomItem"))) return book;
+
+        String spellName = nbti.getString("Spell");
+        int level = nbti.getInteger("Level");
+        int remaining = nbti.getInteger("RemainingUses");
+        int maxUses = nbti.getInteger("MaxUses");
+        YamlConfiguration config = Spell.loadSpellConfig(spellName);
+        String rarity = config.getString(level + ".rarity", "Common");
+        String name = config.getString("name");
+        String color = config.getString("color");
+        int cooldownSeconds = config.getInt(level + ".cooldown", 60);
+
+        if (resetLives) {
+            nbti.setInteger("RemainingUses", maxUses);
+            remaining = maxUses;
+        }
+
+        List<String> loreLines = config.getStringList("lore");
+        ItemMeta meta = book.getItemMeta();
+        meta.setDisplayName(color + "§kP§r "+ color + "§o"+name + " " + intToRoman(level) + " §r" + color + "§kP");
+
+        List<String> lore = new ArrayList<>();
+        lore.add(ChatColor.DARK_GRAY + "Uses: " + ChatColor.GREEN + remaining + ChatColor.GRAY + "/" + ChatColor.GRAY + maxUses);
+        lore.add(ChatColor.DARK_GRAY + "Cooldown: " + ChatColor.GREEN + formatCooldown(cooldownSeconds));
+        lore.add(ChatColor.GRAY + "");
+        lore.add(ChatColor.GOLD + "Cast " + ChatColor.YELLOW + "" + ChatColor.BOLD + "RIGHT-CLICK");
+
+        for (String line : loreLines) {
+            lore.add(formatLore(line,config,level));
+        }
+
+        lore.add(ChatColor.GRAY + "");
+        lore.add(formatRarity(rarity));
+
+        meta.setLore(lore);
+        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+
+        book.setItemMeta(meta);
+
+        return book;
     }
-}
+
+    private static String getStaticNameViaReflection(Class<?> spell) {
+        try {
+            Field field = spell.getField("NAME");
+            return (String) field.get(null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return spell.getSimpleName();
+        }
+    }
 
     private static String intToRoman(int num) {
         switch (num) {

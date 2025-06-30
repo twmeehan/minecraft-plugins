@@ -29,7 +29,7 @@ public class AuctionLogs {
         }
     }
 
-    public static void logAuctionAction(OfflinePlayer seller, Player buyer, String itemName, int amount, int price) {
+    public static void logAuctionAction(OfflinePlayer seller, OfflinePlayer buyer, String itemName, int amount, int price) {
         String sql = "INSERT INTO auction_logs " +
                      "(seller_name, sell_UUID, buyer_name, buyer_UUID, item_name, amount, price) " +
                      "VALUES (?, ?, ?, ?, ?, ?, ?)";
