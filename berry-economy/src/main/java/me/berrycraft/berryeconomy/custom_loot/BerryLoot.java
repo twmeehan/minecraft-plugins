@@ -24,6 +24,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.loot.LootTable;
 import org.bukkit.loot.Lootable;
+import org.bukkit.Location;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,30 +35,85 @@ public class BerryLoot implements Listener {
     private static File file;
     private static FileConfiguration config;
 
+    // Multiplayer looting system
+    private static class LootRecord {
+        Set<UUID> playersLooted = new HashSet<>();
+        long firstOpenedTimestamp;
+        String lootTableName;
+        int tier;
+        LootRecord(UUID player, long time, String lootTableName, int tier) {
+            this.playersLooted.add(player);
+            this.firstOpenedTimestamp = time;
+            this.lootTableName = lootTableName;
+            this.tier = tier;
+        }
+    }
+    private static final Map<Location, LootRecord> lootedContainers = new HashMap<>();
+    private static final long EXPIRATION_MS = 3600_000; // 1 hour
 
     @EventHandler
     public void onClick(PlayerInteractEvent e) {
         Random rand = new Random();
-        if (e.getClickedBlock()!= null && (e.getClickedBlock().getType()==Material.CHEST)) {
-            LootTable table = ((Chest)e.getClickedBlock().getState()).getLootTable();
-            if (table!=null) {
-                Inventory inventory = ((Chest)e.getClickedBlock().getState()).getBlockInventory();
+        Player player = e.getPlayer();
+        Block block = e.getClickedBlock();
+        if (block != null && (block.getType() == Material.CHEST || block.getType() == Material.BARREL)) {
+            cleanupExpiredLootRecords();
+            Location loc = block.getLocation().clone();
+            LootTable table = null;
+            Inventory inventory = null;
+            if (block.getType() == Material.CHEST) {
+                table = ((Chest) block.getState()).getLootTable();
+                inventory = ((Chest) block.getState()).getBlockInventory();
+            } else if (block.getType() == Material.BARREL) {
+                table = ((Barrel) block.getState()).getLootTable();
+                inventory = ((Barrel) block.getState()).getInventory();
+            }
+            if (table != null) {
+                int tier = getTierForLootTable(table.toString());
+                LootRecord record = new LootRecord(player.getUniqueId(), System.currentTimeMillis(), table.toString(), tier);
+                lootedContainers.put(loc, record);
+
                 LinkedList<ItemStack> berries = BerryLoot.generateLoot(table.toString());
-                LootLogs.logLoot(e.getPlayer(), table.toString(), Rainbowberry.getAmount(berries)*100+Pinkberry.getAmount(berries)*10+Raspberry.getAmount(berries));
+                LootLogs.logLoot(player, table.toString(), Rainbowberry.getAmount(berries)*100+Pinkberry.getAmount(berries)*10+Raspberry.getAmount(berries));
                 placeItemsRandomly(inventory, berries);
 
+                // else: player already looted, do nothing
+            } else if (lootedContainers.get(loc) != null) {
+                LootRecord record = lootedContainers.get(loc);
+                if (!record.playersLooted.contains(player.getUniqueId())) {
+                    record.playersLooted.add(player.getUniqueId());
+                    LinkedList<ItemStack> berries = BerryLoot.generateLootForTier(record.tier);
+                    
+                    LootLogs.logLoot(player, record.lootTableName, Rainbowberry.getAmount(berries)*100+Pinkberry.getAmount(berries)*10+Raspberry.getAmount(berries));
+                    placeItemsRandomly(inventory, berries);
+                }
             }
-        } else if (e.getClickedBlock()!= null && (e.getClickedBlock().getType()==Material.BARREL)) {
-            LootTable table = ((Barrel)e.getClickedBlock().getState()).getLootTable();
+        }
+    }
 
-            if (table!=null) {
-                Inventory inventory = ((Barrel)e.getClickedBlock().getState()).getInventory();
-                LinkedList<ItemStack> berries = BerryLoot.generateLoot(table.toString());
-                LootLogs.logLoot(e.getPlayer(), table.toString(), Rainbowberry.getAmount(berries)*100+Pinkberry.getAmount(berries)*10+Raspberry.getAmount(berries));
-                placeItemsRandomly(inventory, berries);
+    private static void cleanupExpiredLootRecords() {
+        long now = System.currentTimeMillis();
+        lootedContainers.entrySet().removeIf(entry -> now - entry.getValue().firstOpenedTimestamp > EXPIRATION_MS);
+    }
 
+    private static int getTierForLootTable(String lootTableName) {
+        config = YamlConfiguration.loadConfiguration(file);
+        if (!config.contains(lootTableName)) return 0;
+        return config.getInt(lootTableName);
+    }
 
-            }
+    public static LinkedList<ItemStack> generateLootForTier(int tier) {
+        switch (tier) {
+            case 1:
+                return BerryLoot.getCommon();
+            case 2:
+                return BerryLoot.getUncommon();
+            case 3:
+                return BerryLoot.getRare();
+            case 4:
+                return BerryLoot.getLegendary();
+            default:
+                return new LinkedList<>();
         }
     }
 
@@ -65,7 +121,7 @@ public class BerryLoot implements Listener {
         Random rand = new Random();
         int berries = 0;
         if (Math.random() > 0.5)
-            berries = rand.nextInt(5)+2;
+            berries = rand.nextInt(5)+4;
         LinkedList<ItemStack> loot = distributeBerries(berries,rand);
         return loot;
 
@@ -73,7 +129,7 @@ public class BerryLoot implements Listener {
 
     public static LinkedList<ItemStack> getUncommon() {
         Random rand = new Random();
-        int berries = rand.nextInt(10)+10;
+        int berries = rand.nextInt(20)+10;
         LinkedList<ItemStack> loot = distributeBerries(berries,rand);
         return loot;
 
@@ -81,7 +137,7 @@ public class BerryLoot implements Listener {
 
     public static LinkedList<ItemStack> getRare() {
         Random rand = new Random();
-        int berries = (rand.nextInt(2)+2)*10;
+        int berries = (rand.nextInt(2)+3)*10;
         if (Math.random()>0.6) {
             berries += rand.nextInt(6);
         }
@@ -99,7 +155,12 @@ public class BerryLoot implements Listener {
 
     // breaks stacks into small randomized amounts
     public static LinkedList<ItemStack> distributeBerries(int count, Random rand) {
-
+        
+        //////////////////////////////////////////////////////////////
+        /// REMOVE THIS AFTER UPDATE 1.7
+        //////////////////////////////////////////////////////////////
+        // temp boost to berries 
+        count = (int)(count * 1.25);
         LinkedList<ItemStack> loot = new LinkedList<>();
         while (count - 100 > 0) {
             loot.add(new Rainbowberry());

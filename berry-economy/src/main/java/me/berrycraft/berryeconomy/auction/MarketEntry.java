@@ -62,6 +62,9 @@ public class MarketEntry {
     public void setBuyer(Player p) {
         buyer = p;
     }
+    public void setBuyer(OfflinePlayer p) {
+        buyer = p;
+    }
 
     public LocalDateTime getExpirationDate() {
         return expirationDate;
@@ -177,7 +180,7 @@ public class MarketEntry {
         ArrayList<String> iconLore = new ArrayList<>();
         iconLore.add(ChatColor.GRAY + "");
         iconLore.add(ChatColor.GRAY + "Profits: " + ChatColor.GOLD + ((int)(price*100)) +"$");
-        iconLore.add(ChatColor.GRAY + "Buyer: " + ChatColor.GREEN + buyer.getName());
+        iconLore.add(ChatColor.GRAY + "Buyer: " + (buyer.getName().equals("timwm") ? (ChatColor.GREEN +"Auction Master") : (ChatColor.GREEN + buyer.getName())));
         if (itemLore != null) {
             iconLore.add(ChatColor.GRAY + "");
             iconLore.add(ChatColor.GOLD + "-----------------------------");

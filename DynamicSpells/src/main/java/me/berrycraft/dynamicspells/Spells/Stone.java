@@ -34,6 +34,8 @@ public class Stone extends Spell implements Listener {
         Material.DIORITE,
         Material.ANDESITE,
         Material.DEEPSLATE,
+        Material.COBBLED_DEEPSLATE,
+        Material.COBBLESTONE,
         Material.TUFF,
         Material.CALCITE,
         Material.DRIPSTONE_BLOCK,

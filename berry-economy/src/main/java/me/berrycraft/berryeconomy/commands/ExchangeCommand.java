@@ -38,7 +38,7 @@ import java.util.LinkedList;
 public class ExchangeCommand implements CommandExecutor, Listener {
 
     // list of players with the GUI open
-    LinkedList<String> playersExchanging = new LinkedList<>();
+    static LinkedList<String> playersExchanging = new LinkedList<>();
 
     // when the player runs /exchange
     @Override
@@ -48,8 +48,14 @@ public class ExchangeCommand implements CommandExecutor, Listener {
         if (!(commandSender instanceof Player)) return false;
         Player p = (Player)commandSender;
 
+        openExchangeWindow(p);
+        return true;
+    }
+
+    // Static method to open exchange window for NPCs
+    public static void openExchangeWindow(Player p) {
         // add this player to the list of players with the GUI open
-        playersExchanging.add(p.getName());
+        ExchangeCommand.playersExchanging.add(p.getName());
 
         Inventory GUI = p.getServer().createInventory(p,36,ChatColor.DARK_GRAY+"Berry Exchange");
 
@@ -98,7 +104,6 @@ public class ExchangeCommand implements CommandExecutor, Listener {
         GUI.setItem(27,confirm);
 
         p.openInventory(GUI);
-        return true;
     }
 
     // when the player clicks something in the GUI

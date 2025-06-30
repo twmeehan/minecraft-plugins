@@ -1,5 +1,6 @@
 package me.berrycraft.berryeconomy;
 
+import me.berrycraft.berryeconomy.auction.AuctionBot;
 import me.berrycraft.berryeconomy.auction.AuctionEventHandler;
 import me.berrycraft.berryeconomy.auction.MarketEntry;
 import me.berrycraft.berryeconomy.auction.windows.AuctionWindow;
@@ -24,6 +25,10 @@ import me.berrycraft.berryeconomy.logs.AuctionLogs;
 import me.berrycraft.berryeconomy.logs.LootLogs;
 import me.berrycraft.berryeconomy.logs.PlayerActivityLogs;
 import me.berrycraft.berryeconomy.logs.PurchaseLogs;
+import me.berrycraft.berryeconomy.npcs.AuctionNPC;
+import me.berrycraft.berryeconomy.npcs.ExchangeNPC;
+import me.berrycraft.berryeconomy.npcs.RepairNPC;
+import me.berrycraft.berryeconomy.windows.RepairWindow;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -58,6 +63,7 @@ public final class Berry extends JavaPlugin {
     private AuctionLogs auctionLogs;
     private PurchaseLogs purchaseLogs;
     private LootLogs lootLogs;
+    private AuctionBot bot;
     @Override
     public void onEnable() {
 
@@ -73,6 +79,12 @@ public final class Berry extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new CustomLootEventHandler(), this);
         getServer().getPluginManager().registerEvents(new WeightInputHandler(), this);
+
+        // Register NPC event listeners
+        getServer().getPluginManager().registerEvents(new AuctionNPC(this), this);
+        getServer().getPluginManager().registerEvents(new ExchangeNPC(this), this);
+        getServer().getPluginManager().registerEvents(new RepairNPC(this), this);
+
 
         ensureScoreboardsExist();
         this.initAuction();
@@ -93,6 +105,7 @@ public final class Berry extends JavaPlugin {
 
         BerryLoot.init();
         RigLoot.init();
+        RepairWindow.init(this);
 
         // Player join and leave logs
         tryRegisterActivityLogs("jdbc:mysql://db-buf-04.sparkedhost.us:3306/s176279_berry", "u176279_AzqIUqrWkU", "aIJ9YG9eY!nrLpu6GL+CnaMZ");
@@ -100,6 +113,7 @@ public final class Berry extends JavaPlugin {
         tryRegisterPurchaseLogs("jdbc:mysql://db-buf-04.sparkedhost.us:3306/s176279_berry", "u176279_AzqIUqrWkU", "aIJ9YG9eY!nrLpu6GL+CnaMZ");
         tryRegisterLootLogs("jdbc:mysql://db-buf-04.sparkedhost.us:3306/s176279_berry", "u176279_AzqIUqrWkU", "aIJ9YG9eY!nrLpu6GL+CnaMZ");
 
+        bot = new AuctionBot(Berry.getInstance(), "timwm");
     }
 
     public void tryRegisterActivityLogs(String url, String user, String password) {
