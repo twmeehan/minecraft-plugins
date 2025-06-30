@@ -115,9 +115,10 @@ public class AuctionBot {
             double fairPrice = config.getDouble( "items." + entry.getItem().getType().toString().toLowerCase() + ".fair_price", 600) * entry.getItem().getAmount();
             //int avgPrice = config.getInt( "items/" + entry.getItem().getType() + "/average_price", 0);
             int wants = config.getInt( "items." + entry.getItem().getType().toString().toLowerCase() + ".wants", 0);
+            int defaultWants = config.getInt( "items." + entry.getItem().getType().toString().toLowerCase() + ".default", 0);
             double entryPrice = (entry.getPrice()*100);
             double priceValue = 1.0/((entryPrice/fairPrice)+0.1);
-            double value = ((double)wants/(double)entry.getItem().getType().getMaxStackSize())*priceValue;
+            double value = ((double)wants/(double)defaultWants)*priceValue;
             if (priceValue < 0.5) continue;
             values.put(entry,value);
         }
